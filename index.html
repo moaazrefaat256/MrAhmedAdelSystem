@@ -1861,17 +1861,25 @@ function logOut() {
 // ============================================================
 //  GRADE & CENTER MANAGEMENT
 // ============================================================
-// Six stages (مراحل دراسية) — each with its own distinguishing color pair and a
-// single-digit code used to build the student code prefix (see getYearPrefix/generateCode).
+// Twelve stages (مراحل دراسية) — each with its own distinguishing color pair and a
+// unique numeric code used to build the student code prefix (see getYearPrefix/generateCode).
+// Note: codeDigit is 1-2 digits (not a single digit) for the last six stages, since all
+// single digits 0-9 were already used by the original six stages.
 const GRADES = {
   prep1:      { name: 'PREP 1 MATH',            short: 'PREP 1 MATH',            color: '#00d4ff', color2: '#0099bb', emoji: '📘', codeDigit: '1' },
   prep2:      { name: 'PREP 2 MATH',            short: 'PREP 2 MATH',            color: '#10b981', color2: '#059669', emoji: '📗', codeDigit: '2' },
   prep3:      { name: 'PREP 3 MATH',            short: 'PREP 3 MATH',            color: '#f59e0b', color2: '#d97706', emoji: '📙', codeDigit: '3' },
   sec1:       { name: 'SEC 1 MATH',             short: 'SEC 1 MATH',             color: '#a855f7', color2: '#7c3aed', emoji: '📕', codeDigit: '4' },
   sec2_bac:   { name: 'تانية ثانوي بكالوريا',    short: 'تانية ثانوي بكالوريا',    color: '#ec4899', color2: '#db2777', emoji: '📓', codeDigit: '5' },
-  sec2_azhar: { name: 'تانية ثانوي أزهر',        short: 'تانية ثانوي أزهر',        color: '#ef4444', color2: '#dc2626', emoji: '📔', codeDigit: '6' }
+  sec2_azhar: { name: 'تانية ثانوي أزهر',        short: 'تانية ثانوي أزهر',        color: '#ef4444', color2: '#dc2626', emoji: '📔', codeDigit: '6' },
+  edadi1:     { name: 'أولى أعدادي',             short: 'أولى أعدادي',             color: '#22c55e', color2: '#16a34a', emoji: '📒', codeDigit: '7' },
+  edadi2:     { name: 'تانية أعدادي',            short: 'تانية أعدادي',            color: '#eab308', color2: '#ca8a04', emoji: '📖', codeDigit: '8' },
+  edadi3:     { name: 'تالتة أعدادي',            short: 'تالتة أعدادي',            color: '#8b5cf6', color2: '#7c3aed', emoji: '📚', codeDigit: '9' },
+  thanawy1:   { name: 'أولى ثانوي عام',          short: 'أولى ثانوي عام',          color: '#f97316', color2: '#ea580c', emoji: '🧮', codeDigit: '10' },
+  thanawy2:   { name: 'تانية ثانوي عام',         short: 'تانية ثانوي عام',         color: '#14b8a6', color2: '#0d9488', emoji: '📐', codeDigit: '11' },
+  thanawy3:   { name: 'تالتة ثانوي عام',         short: 'تالتة ثانوي عام',         color: '#6366f1', color2: '#4f46e5', emoji: '🎓', codeDigit: '12' }
 };
-const GRADE_ORDER = ['prep1','prep2','prep3','sec1','sec2_bac','sec2_azhar'];
+const GRADE_ORDER = ['prep1','prep2','prep3','sec1','sec2_bac','sec2_azhar','edadi1','edadi2','edadi3','thanawy1','thanawy2','thanawy3'];
 
 let currentGrade = null; // one of GRADE_ORDER
 
