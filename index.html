@@ -829,7 +829,16 @@
     <h1 style="font-size:26px;font-weight:900;margin-bottom:6px">Mr. Ahmed Adel</h1>
     <p style="color:var(--text3);font-size:14px;margin-bottom:36px">اختر الصف الدراسي للمتابعة</p>
 
-    <div id="grade-selector-choices" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <select id="grade-login-select"
+        style="padding:16px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface2);color:var(--text);font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center">
+        <option value="" disabled selected>اختر المرحلة الدراسية</option>
+      </select>
+      <button class="btn btn-primary" onclick="confirmLoginGrade()"
+        style="width:100%;justify-content:center;padding:15px;font-size:15px">
+        دخول
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1855,14 +1864,14 @@ function logOut() {
 // Six stages (مراحل دراسية) — each with its own distinguishing color pair and a
 // single-digit code used to build the student code prefix (see getYearPrefix/generateCode).
 const GRADES = {
-  prep1: { name: 'الصف الأول الإعدادي',  short: 'أولى إعدادي',  color: '#00d4ff', color2: '#0099bb', emoji: '📘', codeDigit: '1' },
-  prep2: { name: 'الصف الثاني الإعدادي', short: 'تانية إعدادي', color: '#10b981', color2: '#059669', emoji: '📗', codeDigit: '2' },
-  prep3: { name: 'الصف الثالث الإعدادي', short: 'تالتة إعدادي', color: '#f59e0b', color2: '#d97706', emoji: '📙', codeDigit: '3' },
-  sec1:  { name: 'الصف الأول الثانوي',   short: 'أولى ثانوي',   color: '#a855f7', color2: '#7c3aed', emoji: '📕', codeDigit: '4' },
-  sec2:  { name: 'الصف الثاني الثانوي',  short: 'تانية ثانوي',  color: '#ec4899', color2: '#db2777', emoji: '📓', codeDigit: '5' },
-  sec3:  { name: 'الصف الثالث الثانوي',  short: 'تالتة ثانوي',  color: '#ef4444', color2: '#dc2626', emoji: '📔', codeDigit: '6' }
+  prep1:      { name: 'PREP 1 MATH',            short: 'PREP 1 MATH',            color: '#00d4ff', color2: '#0099bb', emoji: '📘', codeDigit: '1' },
+  prep2:      { name: 'PREP 2 MATH',            short: 'PREP 2 MATH',            color: '#10b981', color2: '#059669', emoji: '📗', codeDigit: '2' },
+  prep3:      { name: 'PREP 3 MATH',            short: 'PREP 3 MATH',            color: '#f59e0b', color2: '#d97706', emoji: '📙', codeDigit: '3' },
+  sec1:       { name: 'SEC 1 MATH',             short: 'SEC 1 MATH',             color: '#a855f7', color2: '#7c3aed', emoji: '📕', codeDigit: '4' },
+  sec2_bac:   { name: 'تانية ثانوي بكالوريا',    short: 'تانية ثانوي بكالوريا',    color: '#ec4899', color2: '#db2777', emoji: '📓', codeDigit: '5' },
+  sec2_azhar: { name: 'تانية ثانوي أزهر',        short: 'تانية ثانوي أزهر',        color: '#ef4444', color2: '#dc2626', emoji: '📔', codeDigit: '6' }
 };
-const GRADE_ORDER = ['prep1','prep2','prep3','sec1','sec2','sec3'];
+const GRADE_ORDER = ['prep1','prep2','prep3','sec1','sec2_bac','sec2_azhar'];
 
 let currentGrade = null; // one of GRADE_ORDER
 
@@ -1956,19 +1965,10 @@ function switchGrade() {
 // Builds the grade-selector overlay (login-time) and the compact topbar switcher
 // from the single GRADES source of truth, so all 6 stages stay in sync everywhere.
 function renderGradeChoices() {
-  const overlayContainer = document.getElementById('grade-selector-choices');
-  if (overlayContainer) {
-    overlayContainer.innerHTML = GRADE_ORDER.map(key => {
-      const g = GRADES[key];
-      return `<button onclick="selectGrade('${key}')"
-        style="padding:18px;background:linear-gradient(135deg,${hexToRgba(g.color,0.15)},${hexToRgba(g.color,0.05)});border:2px solid ${hexToRgba(g.color,0.35)};border-radius:16px;cursor:pointer;font-family:'Cairo',sans-serif;color:var(--text);transition:all 0.2s;text-align:right"
-        onmouseover="this.style.borderColor='${g.color}';this.style.background='${hexToRgba(g.color,0.12)}'"
-        onmouseout="this.style.borderColor='${hexToRgba(g.color,0.35)}';this.style.background='linear-gradient(135deg,${hexToRgba(g.color,0.15)},${hexToRgba(g.color,0.05)})'">
-        <div style="font-size:20px;margin-bottom:4px">${g.emoji}</div>
-        <div style="font-size:16px;font-weight:900">${g.name}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">${g.short}</div>
-      </button>`;
-    }).join('');
+  const loginSelect = document.getElementById('grade-login-select');
+  if (loginSelect) {
+    loginSelect.innerHTML = '<option value="" disabled selected>اختر المرحلة الدراسية</option>' +
+      GRADE_ORDER.map(key => `<option value="${key}">${GRADES[key].emoji} ${GRADES[key].name}</option>`).join('');
   }
 
   const switcher = document.getElementById('grade-switcher');
@@ -1977,6 +1977,18 @@ function renderGradeChoices() {
       `<option value="${key}">${GRADES[key].emoji} ${GRADES[key].short}</option>`
     ).join('');
   }
+}
+
+// Called by the "دخول" button on the login/grade-selector screen — requires an
+// actual selection (the dropdown's own placeholder isn't a valid grade key).
+function confirmLoginGrade() {
+  const loginSelect = document.getElementById('grade-login-select');
+  const value = loginSelect && loginSelect.value;
+  if (!value) {
+    showToast('من فضلك اختر المرحلة الدراسية أولاً', 'error');
+    return;
+  }
+  selectGrade(value);
 }
 
 // ============================================================
