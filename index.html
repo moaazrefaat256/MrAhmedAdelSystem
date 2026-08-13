@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dr. Alaa Saber | نظام الإدارة</title>
+<title>Mr. Ahmed Adel | نظام الإدارة</title>
 <!-- Firebase via CDN (multiple fallbacks) -->
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/firebase-app-compat.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/firebase-database-compat.min.js"></script>
@@ -36,44 +36,6 @@
     --grade-glow: rgba(0,212,255,0.15);
   }
 
-  /* تانية ثانوي — أزرق */
-  body.grade-second {
-    --accent: #00d4ff;
-    --grade-color: #00d4ff;
-    --grade-glow: rgba(0,212,255,0.15);
-    --glow: 0 0 20px rgba(0,212,255,0.15);
-  }
-  body.grade-second .sidebar { border-left-color: rgba(0,212,255,0.2); }
-  body.grade-second .sidebar-logo .logo-icon { background: linear-gradient(135deg,#00d4ff,#0099bb); }
-  body.grade-second body::before { background: radial-gradient(circle, rgba(0,212,255,0.05) 0%, transparent 70%); }
-
-  /* تالتة ثانوي — بنفسجي/أخضر */
-  body.grade-third {
-    --accent: #a855f7;
-    --grade-color: #a855f7;
-    --grade-glow: rgba(168,85,247,0.15);
-    --glow: 0 0 20px rgba(168,85,247,0.15);
-  }
-  body.grade-third .sidebar { border-left: 1px solid rgba(168,85,247,0.25); }
-  body.grade-third .sidebar-logo .logo-icon { background: linear-gradient(135deg,#a855f7,#7c3aed); }
-  body.grade-third .nav-item.active {
-    background: linear-gradient(135deg,rgba(168,85,247,0.15),rgba(124,58,237,0.1));
-    color: #a855f7;
-    border-color: rgba(168,85,247,0.2);
-  }
-  body.grade-third .btn-primary {
-    background: linear-gradient(135deg,#a855f7,#7c3aed);
-    box-shadow: 0 0 20px rgba(168,85,247,0.25);
-  }
-  body.grade-third .stat-card:hover { border-color: #a855f7; box-shadow: 0 0 20px rgba(168,85,247,0.15); }
-  body.grade-third input:focus, body.grade-third select:focus {
-    border-color: #a855f7;
-    box-shadow: 0 0 0 3px rgba(168,85,247,0.1);
-  }
-  body.grade-third .session-pill.active { background: linear-gradient(135deg,#a855f7,#7c3aed); }
-  body.grade-third .att-card.present { border-color: #a855f7; background: rgba(168,85,247,0.05); }
-  body.grade-third .progress-fill { background: linear-gradient(90deg,#a855f7,#7c3aed); }
-
   /* Grade indicator bar at top */
   .grade-indicator {
     position: fixed;
@@ -82,8 +44,6 @@
     z-index: 9999;
     transition: background 0.3s;
   }
-  body.grade-second .grade-indicator { background: linear-gradient(90deg,#00d4ff,#0099bb,#00d4ff); }
-  body.grade-third  .grade-indicator { background: linear-gradient(90deg,#a855f7,#7c3aed,#a855f7); }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Cairo', sans-serif;
@@ -579,19 +539,38 @@
     100% { transform: scale(1); }
   }
 
+  /* ===== LARGE SCREENS (1400px+) ===== */
+  @media (min-width: 1400px) {
+    .sidebar { width: 260px; }
+    .main { margin-right: 260px; }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    .content { padding: 36px; }
+  }
+
+  /* ===== TABLET LARGE (1100px) ===== */
+  @media (max-width: 1100px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   /* ===== TABLET (900px) ===== */
   @media (max-width: 900px) {
     .sidebar { width: 60px; }
-    .sidebar-logo h1, .sidebar-logo p, .nav-item span, .sidebar-footer .teacher-info, .nav-section { display: none; }
+    .sidebar-logo h1, .sidebar-logo p, .nav-item span:not(.icon), .sidebar-footer .teacher-info, .nav-section, .nav-badge { display: none; }
+    .sidebar-logo { padding: 16px 8px; text-align: center; }
+    .sidebar-logo .logo-icon { margin: 0 auto; }
+    .nav-item { justify-content: center; padding: 12px 8px; }
     .main { margin-right: 60px; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
     .two-col { grid-template-columns: 1fr; }
     .three-col { grid-template-columns: 1fr 1fr; }
+    .content { padding: 20px; }
+    .card-header { flex-wrap: wrap; gap: 10px; }
+    .topbar { padding: 14px 20px; }
   }
 
   /* ===== MOBILE (600px) ===== */
   @media (max-width: 600px) {
-    /* Hide sidebar completely — use bottom nav instead */
+    /* Hide sidebar — use bottom nav */
     .sidebar { display: none; }
     .main { margin-right: 0; padding-bottom: 72px; }
 
@@ -609,15 +588,9 @@
       padding: 0 4px;
     }
     .bottom-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      padding: 6px 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      flex: 1;
-      transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px; padding: 6px 8px; border-radius: 12px;
+      cursor: pointer; flex: 1; transition: all 0.2s;
       font-family: 'Cairo', sans-serif;
     }
     .bottom-nav-item .bn-icon { font-size: 20px; }
@@ -626,79 +599,145 @@
     .bottom-nav-item.active .bn-label { color: var(--accent); }
 
     /* Topbar */
-    .topbar { padding: 12px 16px; }
-    .page-title { font-size: 16px; }
+    .topbar { padding: 10px 14px; }
+    .page-title { font-size: 15px; }
+    .page-subtitle { display: none; }
     .topbar-actions .btn span:not(.icon) { display: none; }
+    .topbar-actions .btn { padding: 8px 10px; }
 
     /* Content */
-    .content { padding: 14px; }
+    .content { padding: 12px; }
 
-    /* Stats */
-    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-    .stat-value { font-size: 24px; }
-    .stat-card { padding: 14px; }
+    /* Stats — 2 col on small, 1 col on tiny */
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .stat-value { font-size: 22px; }
+    .stat-card { padding: 12px 10px; }
+    .stat-icon { font-size: 20px; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; }
+    .stat-change { font-size: 10px; }
 
     /* Cards */
-    .card { padding: 16px; border-radius: 12px; }
-    .card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .card { padding: 14px 12px; border-radius: 12px; margin-bottom: 12px; }
+    .card-header { flex-direction: column; align-items: flex-start; gap: 8px; }
     .card-header > div:last-child { width: 100%; display: flex; flex-wrap: wrap; gap: 6px; }
+    .card-title { font-size: 14px; }
 
-    /* Two col → single */
-    .two-col { grid-template-columns: 1fr; }
-    .three-col { grid-template-columns: 1fr; }
-    .form-grid { grid-template-columns: 1fr; }
+    /* Grids */
+    .two-col { grid-template-columns: 1fr; gap: 12px; }
+    .three-col { grid-template-columns: 1fr; gap: 12px; }
+    .form-grid { grid-template-columns: 1fr; gap: 10px; }
 
     /* Tables — horizontal scroll */
-    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { min-width: 500px; font-size: 12px; }
-    th, td { padding: 10px 10px; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; }
+    table { min-width: 480px; font-size: 12px; }
+    th { padding: 10px 8px; font-size: 10px; }
+    td { padding: 10px 8px; font-size: 12px; }
 
     /* Buttons */
-    .btn { padding: 8px 14px; font-size: 12px; }
-    .btn-sm { padding: 6px 10px; font-size: 11px; }
+    .btn { padding: 8px 12px; font-size: 12px; }
+    .btn-sm { padding: 5px 9px; font-size: 11px; }
 
-    /* Attendance grid */
-    .att-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
-    .att-card { padding: 12px; }
+    /* Attendance table */
+    .att-grid table { font-size: 11px; min-width: 420px; }
+    .att-grid td, .att-grid th { padding: 8px 6px; }
+    .att-grid input[type="text"] { width: 75px !important; font-size: 11px; padding: 4px 6px !important; }
+    .att-grid .btn-sm { padding: 4px 6px; font-size: 10px; }
 
-    /* Session pills */
-    .session-pills { gap: 6px; }
-    .session-pill { font-size: 11px; padding: 5px 12px; }
+    /* Session pills — scrollable row */
+    .session-pills { gap: 6px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+    .session-pill { font-size: 11px; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; }
 
     /* Modals */
-    .modal { padding: 20px; width: 96vw !important; max-height: 90vh; }
-    .modal-title { font-size: 16px; }
+    .modal { padding: 16px; width: 96vw !important; max-height: 92vh; border-radius: 16px; }
+    .modal-title { font-size: 15px; }
+    .modal-header { margin-bottom: 16px; }
 
     /* Inner tabs */
-    .inner-tabs { overflow-x: auto; flex-wrap: nowrap; }
-    .inner-tab { white-space: nowrap; font-size: 12px; padding: 7px 14px; }
+    .inner-tabs { overflow-x: auto; flex-wrap: nowrap; padding: 3px; }
+    .inner-tab { white-space: nowrap; font-size: 11px; padding: 7px 12px; }
 
     /* Report cards */
-    .report-student-card { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .report-student-card { grid-template-columns: 1fr auto; gap: 8px; }
+    .report-stat-val { font-size: 16px; }
 
     /* QR scanner */
-    #scanner-active video { max-height: 240px; }
+    #scanner-active { width: 100%; }
+    #scanner-active video { max-height: 220px; }
+    #scan-status { width: 100% !important; max-width: 100% !important; font-size: 12px; }
 
-    /* Grades search */
-    #grades-search { width: 140px !important; }
-
-    /* Attendance table on mobile */
-    .att-grid table { font-size: 11px; }
-    .att-grid td, .att-grid th { padding: 8px 8px; }
-    .att-grid input[type="text"] { width: 80px !important; font-size: 11px; }
-    .att-grid .btn-sm { padding: 5px 7px; font-size: 10px; }
+    /* Attendance filter row */
+    #att-center-filter { width: 130px !important; font-size: 12px !important; }
 
     /* Upload zone */
-    .upload-zone { padding: 24px; }
-    .upload-zone .upload-icon { font-size: 28px; }
+    .upload-zone { padding: 20px; }
+    .upload-zone .upload-icon { font-size: 26px; }
+    .upload-zone p { font-size: 13px; }
 
     /* Toast */
-    .toast-container { left: 12px; right: 12px; bottom: 76px; }
-    .toast { max-width: 100%; }
+    .toast-container { left: 10px; right: 10px; bottom: 76px; }
+    .toast { max-width: 100%; font-size: 12px; padding: 12px 14px; }
 
     /* Delete confirm toasts */
-    div[id$="-toast"] { left: 12px !important; right: 12px !important; max-width: 100% !important; bottom: 76px !important; }
+    div[id$="-toast"] { left: 10px !important; right: 10px !important; max-width: 100% !important; bottom: 76px !important; }
+
+    /* Notif items */
+    .notif-item { padding: 10px; }
+    .notif-title { font-size: 12px; }
+    .notif-msg { font-size: 11px; }
+
+    /* WhatsApp modal list */
+    #wa-list .btn-sm { font-size: 11px; padding: 5px 8px; }
+
+    /* Message type buttons */
+    .msg-type-btn { padding: 10px 12px; }
+    .msg-type-btn .msg-label { font-size: 13px; }
+    .msg-type-btn .msg-icon { font-size: 18px; }
   }
+
+  /* ===== TINY MOBILE (380px) ===== */
+  @media (max-width: 380px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .stat-value { font-size: 20px; }
+    .stat-card { padding: 10px 8px; }
+    .content { padding: 10px; }
+    .card { padding: 12px 10px; }
+    .btn { font-size: 11px; padding: 7px 10px; }
+    .btn-sm { font-size: 10px; padding: 4px 7px; }
+    table { min-width: 400px; font-size: 11px; }
+    .bottom-nav-item .bn-label { font-size: 8px; }
+    .bottom-nav-item .bn-icon { font-size: 18px; }
+    .session-pill { font-size: 10px; padding: 4px 10px; }
+    .modal { padding: 14px; }
+    .page-title { font-size: 14px; }
+    .topbar { padding: 8px 12px; }
+  }
+  /* ============================================================
+     Grade theming — driven entirely by CSS variables set dynamically
+     per stage in JS (see selectGrade / applyGradeTheme), so any number
+     of stages/colors can be supported without a CSS block per stage.
+     Placed last so it overrides the base (default) rules above.
+  ============================================================ */
+  .sidebar { border-left-color: var(--grade-glow); }
+  .sidebar-logo .logo-icon { background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: var(--glow); }
+  body::before { background: radial-gradient(circle, var(--grade-glow) 0%, transparent 70%); }
+  .nav-item.active {
+    background: linear-gradient(135deg, var(--grade-glow), var(--grade-glow));
+    color: var(--grade-color);
+    border: 1px solid var(--grade-glow);
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: var(--glow);
+  }
+  .btn-primary:hover { box-shadow: var(--glow); transform: translateY(-1px); }
+  .stat-card:hover { border-color: var(--grade-color); box-shadow: var(--glow); }
+  input:focus, select:focus {
+    border-color: var(--grade-color);
+    box-shadow: 0 0 0 3px var(--grade-glow);
+  }
+  .session-pill.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
+  .progress-fill { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .grade-indicator { background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent)); }
 </style>
 </head>
 <body>
@@ -709,7 +748,7 @@
 <div id="login-screen" style="position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center;font-family:'Cairo',sans-serif">
   <div style="text-align:center;max-width:380px;width:90%;padding:20px">
     <div style="font-size:52px;margin-bottom:16px">⚗️</div>
-    <h1 style="font-size:24px;font-weight:900;margin-bottom:6px">Dr. Alaa Saber</h1>
+    <h1 style="font-size:24px;font-weight:900;margin-bottom:6px">Mr. Ahmed Adel</h1>
     <p style="color:var(--text3);font-size:14px;margin-bottom:32px">نظام إدارة السنتر</p>
 
     <div id="login-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--danger);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px"></div>
@@ -737,28 +776,10 @@
 <div id="grade-selector-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:'Cairo',sans-serif">
   <div style="text-align:center;max-width:440px;width:90%;padding:20px">
     <div style="font-size:52px;margin-bottom:16px">⚗️</div>
-    <h1 style="font-size:26px;font-weight:900;margin-bottom:6px">Dr. Alaa Saber</h1>
+    <h1 style="font-size:26px;font-weight:900;margin-bottom:6px">Mr. Ahmed Adel</h1>
     <p style="color:var(--text3);font-size:14px;margin-bottom:36px">اختر الصف الدراسي للمتابعة</p>
 
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <button onclick="selectGrade('second')"
-        style="padding:20px;background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05));border:2px solid rgba(0,212,255,0.3);border-radius:16px;cursor:pointer;font-family:'Cairo',sans-serif;color:var(--text);transition:all 0.2s"
-        onmouseover="this.style.borderColor='var(--accent)';this.style.background='rgba(0,212,255,0.12)'"
-        onmouseout="this.style.borderColor='rgba(0,212,255,0.3)';this.style.background='linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,212,255,0.05))'">
-        <div style="font-size:22px;margin-bottom:4px">📘</div>
-        <div style="font-size:18px;font-weight:900">الصف الثاني الثانوي</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:4px">Second Year Secondary</div>
-      </button>
-
-      <button onclick="selectGrade('third')"
-        style="padding:20px;background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(124,58,237,0.05));border:2px solid rgba(124,58,237,0.3);border-radius:16px;cursor:pointer;font-family:'Cairo',sans-serif;color:var(--text);transition:all 0.2s"
-        onmouseover="this.style.borderColor='var(--accent2)';this.style.background='rgba(124,58,237,0.12)'"
-        onmouseout="this.style.borderColor='rgba(124,58,237,0.3)';this.style.background='linear-gradient(135deg,rgba(124,58,237,0.15),rgba(124,58,237,0.05))'">
-        <div style="font-size:22px;margin-bottom:4px">📗</div>
-        <div style="font-size:18px;font-weight:900">الصف الثالث الثانوي</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:4px">Third Year Secondary</div>
-      </button>
-    </div>
+    <div id="grade-selector-choices" style="display:flex;flex-direction:column;gap:12px"></div>
   </div>
 </div>
 
@@ -766,8 +787,8 @@
 <nav class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-icon">⚗️</div>
-    <h1>Dr. Alaa Saber</h1>
-    <p>Dr. Alaa Saber — نظام الإدارة</p>
+    <h1>Mr. Ahmed Adel</h1>
+    <p>Mr. Ahmed Adel — نظام الإدارة</p>
   </div>
 
   <div class="nav-section">القائمة الرئيسية</div>
@@ -807,7 +828,7 @@
     <div class="teacher-card">
       <div class="teacher-avatar">👨‍🏫</div>
       <div class="teacher-info">
-        <div class="teacher-name">Dr. Alaa Saber</div>
+        <div class="teacher-name">Mr. Ahmed Adel</div>
         <div class="teacher-role">مدير السنتر</div>
       </div>
     </div>
@@ -824,15 +845,9 @@
     </div>
     <div class="topbar-actions" id="topbar-actions">
       <div style="display:flex;align-items:center;gap:8px">
-        <div style="display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px">
-          <button id="grade-btn-second" onclick="selectGrade('second')"
-            style="padding:6px 14px;border-radius:7px;border:none;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--text3)">
-            📘 تانية ثانوي
-          </button>
-          <button id="grade-btn-third" onclick="selectGrade('third')"
-            style="padding:6px 14px;border-radius:7px;border:none;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--text3)">
-            📗 تالتة ثانوي
-          </button>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:2px">
+          <select id="grade-switcher" onchange="selectGrade(this.value)"
+            style="padding:6px 10px;border-radius:7px;border:none;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--text);outline:none"></select>
         </div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">
           <span id="sync-status" style="color:var(--warn)">🔄 جارٍ الاتصال...</span>
@@ -976,6 +991,7 @@
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             <button class="btn btn-success btn-sm" onclick="sendWhatsAppAll()">📲 إرسال للكل</button>
+            <button class="btn btn-sm" onclick="promptServerUrl()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:11px">🌐 رابط السيرفر</button>
             <button class="btn btn-danger btn-sm" onclick="deleteAllStudents()">🗑️ حذف الكل</button>
             <select id="center-filter" onchange="filterStudents()" style="width:160px;font-size:12px;padding:8px 12px">
               <option value="">كل السنترات</option>
@@ -1049,7 +1065,7 @@
                 <div id="scan-line" style="position:absolute;right:10px;left:10px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scanAnim 2s linear infinite;top:50%"></div>
               </div>
             </div>
-            <div id="scan-status" style="font-size:13px;color:var(--text3)">جارٍ البحث عن QR Code...</div>
+            <div id="scan-status" style="font-size:13px;color:var(--text3);width:100%;max-width:320px;padding:0 8px;box-sizing:border-box">جارٍ البحث عن QR Code...</div>
             <button class="btn btn-secondary btn-sm" onclick="closeScanner()">✕ إغلاق الكاميرا</button>
           </div>
         </div>
@@ -1141,6 +1157,10 @@
                 </select>
               </div>
             </div>
+            <div class="form-group">
+              <label>ملاحظات الكويز <span style="font-size:10px;color:var(--text3);font-weight:400">(اختياري — ستُضاف في رسالة ولي الأمر)</span></label>
+              <input type="text" id="q-note" placeholder="مثال: الكويز صعب شوية، الكل عدى بتفوق 🎉">
+            </div>
             <button class="btn btn-primary" onclick="createQuiz()">✅ إنشاء الكويز</button>
           </div>
         </div>
@@ -1156,7 +1176,10 @@
         <div class="card-header">
           <div>
             <div class="card-title" id="active-quiz-title">إدخال الدرجات</div>
-            <div class="card-subtitle" id="active-quiz-subtitle"></div>
+            <div id="active-quiz-subtitle" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:3px">
+              <span class="card-subtitle" id="active-quiz-subtitle-text"></span>
+              <span id="quiz-att-badge" style="display:none;font-size:11px;background:rgba(16,185,129,0.12);color:var(--accent3);border:1px solid rgba(16,185,129,0.25);border-radius:20px;padding:2px 10px;font-weight:700">✅ الحاضرين فقط</span>
+            </div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
             <div class="search-wrap">
@@ -1164,13 +1187,14 @@
               <input type="text" id="grades-search" placeholder="ابحث باسم أو كود..." oninput="filterGrades()" style="width:200px;padding-right:38px">
             </div>
             <button class="btn btn-secondary btn-sm" onclick="autoFillGrades()">🎲 Demo</button>
+            <button class="btn btn-secondary btn-sm" onclick="sortGradesByScore()">🔽 ترتيب حسب الدرجة</button>
             <button class="btn btn-secondary btn-sm" onclick="saveGradesOnly()">💾 حفظ</button>
             <button class="btn btn-success btn-sm" onclick="sendGradesWhatsApp()">📲 إرسال واتساب</button>
           </div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>#</th><th>الاسم</th><th>الكود</th><th>الدرجة</th><th>من</th><th>النسبة</th></tr></thead>
+            <thead><tr><th>#</th><th>الاسم</th><th>الكود</th><th>الدرجة</th><th>من</th><th>النسبة</th><th>ملاحظة</th></tr></thead>
             <tbody id="grades-tbody"></tbody>
           </table>
         </div>
@@ -1237,17 +1261,17 @@
             </div>
             <div class="form-group">
               <label>نموذج رسالة الغياب</label>
-              <textarea id="absence-template" rows="5" style="resize:vertical">❌ *غياب — Dr. Alaa Saber*
+              <textarea id="absence-template" rows="5" style="resize:vertical">❌ *غياب — Mr. Ahmed Adel*
 ولي أمر الطالب/ة *{name}*،
 نود إعلامكم بغياب ابنكم/ابنتكم عن {session} بتاريخ {date}.
 نرجو الاهتمام بالحضور المنتظم. 🙏</textarea>
             </div>
             <div class="form-group">
               <label>نموذج رسالة الدرجات</label>
-              <textarea id="grade-template" rows="5" style="resize:vertical">📝 *نتيجة {quiz} — Dr. Alaa Saber*
+              <textarea id="grade-template" rows="5" style="resize:vertical">📝 *نتيجة {quiz} — Mr. Ahmed Adel*
 ولي أمر الطالب/ة *{name}*،
 الدرجة: *{grade}/{total} ({percent}%)*
-للاستفسار يرجى التواصل. 📚</textarea>
+{quiznote}للاستفسار يرجى التواصل. 📚</textarea>
             </div>
             <button class="btn btn-primary" onclick="saveNotifSettings()">💾 حفظ الإعدادات</button>
           </div>
@@ -1309,19 +1333,15 @@
           <div style="display:flex;flex-direction:column;gap:12px">
             <div class="form-group">
               <label>اسم السنتر</label>
-              <input type="text" id="center-name" value="Dr. Alaa Saber">
+              <input type="text" id="center-name" value="Mr. Ahmed Adel">
             </div>
             <div class="form-group">
               <label>اسم المدرس</label>
-              <input type="text" id="teacher-name" value="Dr. Alaa Saber">
+              <input type="text" id="teacher-name" value="Mr. Ahmed Adel">
             </div>
             <div class="form-group">
-              <label>الفصل الدراسي</label>
-              <select id="semester">
-                <option>الفصل الأول 2024/2025</option>
-                <option>الفصل الثاني 2024/2025</option>
-                <option>الفصل الأول 2025/2026</option>
-              </select>
+              <label>العام الدراسي <span style="font-size:10px;color:var(--text3);font-weight:400">(يحدد بداية كود الطالب)</span></label>
+              <select id="academic-year" onchange="onAcademicYearChange()"></select>
             </div>
             <div class="form-group">
               <label>الحد الأقصى للغياب (قبل تحذير)</label>
@@ -1549,12 +1569,13 @@ let state = {
   grades: {}, // { quizId: { studentCode: number } }
   notifications: [],
   settings: {
-    centerName: 'Dr. Alaa Saber',
+    centerName: 'Mr. Ahmed Adel',
     teacherName: 'أ. محمد أحمد',
     notifMethod: 'demo',
-    absenceTemplate: '❌ *غياب — Dr. Alaa Saber*\nولي أمر الطالب/ة *{name}*،\nنود إعلامكم بغياب ابنكم/ابنتكم عن {session} بتاريخ {date}.\nنرجو الاهتمام بالحضور المنتظم. 🙏',
-    gradeTemplate: '📝 *نتيجة {quiz} — Dr. Alaa Saber*\nولي أمر الطالب/ة *{name}*،\nالدرجة: *{grade}/{total} ({percent}%)*\nللاستفسار يرجى التواصل. 📚',
-    maxAbsence: 3
+    absenceTemplate: '❌ *غياب — Mr. Ahmed Adel*\nولي أمر الطالب/ة *{name}*،\nنود إعلامكم بغياب ابنكم/ابنتكم عن {session} بتاريخ {date}.\nنرجو الاهتمام بالحضور المنتظم. 🙏',
+    gradeTemplate: '{quiznote}📝 *نتيجة {quiz} — Mr. Ahmed Adel*\nولي أمر الطالب/ة *{name}*،\nالدرجة: *{grade}/{total}* ({percent}%){studentnote}\nللاستفسار يرجى التواصل. 📚',
+    maxAbsence: 3,
+    academicYear: '26-27'
   },
   currentSession: null,
   activeQuiz: null
@@ -1768,50 +1789,56 @@ function logOut() {
 // ============================================================
 //  GRADE & CENTER MANAGEMENT
 // ============================================================
+// Six stages (مراحل دراسية) — each with its own distinguishing color pair and a
+// single-digit code used to build the student code prefix (see getYearPrefix/generateCode).
 const GRADES = {
-  second: { name: 'الصف الثاني الثانوي', short: 'تانية ثانوي', color: '#00d4ff', emoji: '📘' },
-  third:  { name: 'الصف الثالث الثانوي', short: 'تالتة ثانوي', color: '#a855f7', emoji: '📗' }
+  prep1: { name: 'الصف الأول الإعدادي',  short: 'أولى إعدادي',  color: '#00d4ff', color2: '#0099bb', emoji: '📘', codeDigit: '1' },
+  prep2: { name: 'الصف الثاني الإعدادي', short: 'تانية إعدادي', color: '#10b981', color2: '#059669', emoji: '📗', codeDigit: '2' },
+  prep3: { name: 'الصف الثالث الإعدادي', short: 'تالتة إعدادي', color: '#f59e0b', color2: '#d97706', emoji: '📙', codeDigit: '3' },
+  sec1:  { name: 'الصف الأول الثانوي',   short: 'أولى ثانوي',   color: '#a855f7', color2: '#7c3aed', emoji: '📕', codeDigit: '4' },
+  sec2:  { name: 'الصف الثاني الثانوي',  short: 'تانية ثانوي',  color: '#ec4899', color2: '#db2777', emoji: '📓', codeDigit: '5' },
+  sec3:  { name: 'الصف الثالث الثانوي',  short: 'تالتة ثانوي',  color: '#ef4444', color2: '#dc2626', emoji: '📔', codeDigit: '6' }
 };
+const GRADE_ORDER = ['prep1','prep2','prep3','sec1','sec2','sec3'];
 
-let currentGrade = null; // 'second' or 'third'
+let currentGrade = null; // one of GRADE_ORDER
+
+// Applies the selected stage's colors as CSS variables — this is what actually
+// tints the sidebar, buttons, indicator bar, etc. (see the CSS rules at the end
+// of <style> that read var(--accent) / var(--accent2) / var(--grade-color) / var(--grade-glow) / var(--glow)).
+function applyGradeTheme(grade) {
+  const g = GRADES[grade];
+  if (!g) return;
+  const root = document.documentElement.style;
+  const glow = hexToRgba(g.color, 0.15);
+  root.setProperty('--accent', g.color);
+  root.setProperty('--accent2', g.color2);
+  root.setProperty('--grade-color', g.color);
+  root.setProperty('--grade-glow', glow);
+  root.setProperty('--glow', '0 0 20px ' + glow);
+
+  const pageTitle = document.getElementById('page-title');
+  if (pageTitle) pageTitle.style.color = g.color;
+}
+
+function hexToRgba(hex, alpha) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0,2), 16);
+  const g = parseInt(h.substring(2,4), 16);
+  const b = parseInt(h.substring(4,6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 
 function selectGrade(grade) {
+  if (!GRADES[grade]) return;
   currentGrade = grade;
   localStorage.setItem('chm-current-grade', grade);
 
-  // Apply grade theme to body
-  document.body.classList.remove('grade-second','grade-third');
-  document.body.classList.add('grade-' + grade);
+  applyGradeTheme(grade);
 
-  // Highlight active grade button
-  ['second','third'].forEach(g => {
-    const btn = document.getElementById('grade-btn-' + g);
-    if (!btn) return;
-    if (g === grade) {
-      btn.style.background = GRADES[g].color;
-      btn.style.color = g === 'second' ? '#000' : '#fff';
-      btn.style.boxShadow = '0 2px 8px ' + GRADES[g].color + '44';
-    } else {
-      btn.style.background = 'transparent';
-      btn.style.color = 'var(--text3)';
-      btn.style.boxShadow = 'none';
-    }
-  });
-
-  // Update sidebar logo icon color live
-  const logoIcon = document.querySelector('.logo-icon');
-  if (logoIcon) {
-    logoIcon.style.background = grade === 'second'
-      ? 'linear-gradient(135deg,#00d4ff,#0099bb)'
-      : 'linear-gradient(135deg,#a855f7,#7c3aed)';
-    logoIcon.style.boxShadow = grade === 'second'
-      ? '0 0 20px rgba(0,212,255,0.3)'
-      : '0 0 20px rgba(168,85,247,0.3)';
-  }
-
-  // Update page title color
-  const pageTitle = document.getElementById('page-title');
-  if (pageTitle) pageTitle.style.color = GRADES[grade].color;
+  // Highlight active grade button/option in the topbar switcher
+  const switcher = document.getElementById('grade-switcher');
+  if (switcher) switcher.value = grade;
 
   // Hide overlay IMMEDIATELY
   const overlay = document.getElementById('grade-selector-overlay');
@@ -1861,6 +1888,64 @@ function selectGrade(grade) {
 
 function switchGrade() {
   // kept for compatibility — buttons now call selectGrade directly
+}
+
+// Builds the grade-selector overlay (login-time) and the compact topbar switcher
+// from the single GRADES source of truth, so all 6 stages stay in sync everywhere.
+function renderGradeChoices() {
+  const overlayContainer = document.getElementById('grade-selector-choices');
+  if (overlayContainer) {
+    overlayContainer.innerHTML = GRADE_ORDER.map(key => {
+      const g = GRADES[key];
+      return `<button onclick="selectGrade('${key}')"
+        style="padding:18px;background:linear-gradient(135deg,${hexToRgba(g.color,0.15)},${hexToRgba(g.color,0.05)});border:2px solid ${hexToRgba(g.color,0.35)};border-radius:16px;cursor:pointer;font-family:'Cairo',sans-serif;color:var(--text);transition:all 0.2s;text-align:right"
+        onmouseover="this.style.borderColor='${g.color}';this.style.background='${hexToRgba(g.color,0.12)}'"
+        onmouseout="this.style.borderColor='${hexToRgba(g.color,0.35)}';this.style.background='linear-gradient(135deg,${hexToRgba(g.color,0.15)},${hexToRgba(g.color,0.05)})'">
+        <div style="font-size:20px;margin-bottom:4px">${g.emoji}</div>
+        <div style="font-size:16px;font-weight:900">${g.name}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${g.short}</div>
+      </button>`;
+    }).join('');
+  }
+
+  const switcher = document.getElementById('grade-switcher');
+  if (switcher) {
+    switcher.innerHTML = GRADE_ORDER.map(key =>
+      `<option value="${key}">${GRADES[key].emoji} ${GRADES[key].short}</option>`
+    ).join('');
+  }
+}
+
+// ============================================================
+//  ACADEMIC YEAR
+// ============================================================
+// Builds the "26-27" .. "34-35" dropdown, and returns the 2-digit prefix
+// (the year's second number) that goes at the start of every student code.
+function buildAcademicYearOptions() {
+  const sel = document.getElementById('academic-year');
+  if (!sel) return;
+  const years = [];
+  for (let y = 26; y <= 34; y++) years.push(String(y) + '-' + String(y + 1));
+  sel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+  const saved = (state.settings && state.settings.academicYear) || years[0];
+  sel.value = years.includes(saved) ? saved : years[0];
+}
+
+function getAcademicYearPrefix() {
+  const sel = document.getElementById('academic-year');
+  const val = (sel && sel.value) || (state.settings && state.settings.academicYear) || '26-27';
+  const parts = val.split('-');
+  return parts[1] || parts[0]; // e.g. "27" from "26-27"
+}
+
+function onAcademicYearChange() {
+  const sel = document.getElementById('academic-year');
+  if (!sel) return;
+  state.settings.academicYear = sel.value;
+  saveState();
+  // Refresh the pending new-student code so it reflects the new prefix
+  const codeEl = document.getElementById('s-code');
+  if (codeEl) codeEl.value = generateCode();
 }
 
 
@@ -1935,14 +2020,14 @@ function updateCenterDatalist() {
 }
 
 function getYearPrefix() {
-  const yy = String(new Date().getFullYear()).slice(-2); // "26"
-  const gradeNum = currentGrade === 'third' ? '3' : '2'; // 2 or 3
-  return yy + gradeNum; // e.g. "262" or "263"
+  const yy = getAcademicYearPrefix(); // e.g. "27" from academic year "26-27"
+  const gradeDigit = (GRADES[currentGrade] && GRADES[currentGrade].codeDigit) || '0';
+  return yy + gradeDigit; // e.g. "271" .. "356"
 }
 
 function generateCode() {
-  const prefix = getYearPrefix(); // "262" or "263"
-  // codes: 262001 - 262999 (تانية) or 263001 - 263999 (تالتة)
+  const prefix = getYearPrefix(); // e.g. "271"
+  // codes: <prefix>001 - <prefix>999, unique per academic-year + stage combination
   const base = parseInt(prefix) * 1000;      // 262000 or 263000
   const max  = base + 999;                   // 262999 or 263999
   const used = new Set(state.students.map(s => s.code));
@@ -2000,7 +2085,7 @@ function addStudent() {
   }
 
   // At least one parent number required
-  if (!father && !mother) { showToast('⚠️ لازم رقم الأب أو الأم على الأقل', 'error'); return; }
+  // رقم واحد على الأقل كافي (أب أو أم)
 
   // All entered numbers must be exactly 11 digits
   const phoneFields = [
@@ -2509,7 +2594,13 @@ function makeAttRow(s, status) {
         ${s.isGuest ? '<span style="font-size:10px;background:rgba(168,85,247,0.15);color:#a855f7;padding:1px 6px;border-radius:4px;font-weight:700">🔄 تعويض</span>' : ''}
       </div>
       ${s.pinnedNote ? `<div style="font-size:11px;color:var(--warn);margin-top:3px;background:rgba(245,158,11,0.08);padding:2px 8px;border-radius:6px;border:1px solid rgba(245,158,11,0.2)">📌 ${s.pinnedNote}</div>` : ''}
-      ${lastAbsenceNote !== null && !isAbsent && !s.isGuest ? `<div style="font-size:12px;margin-top:3px;display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(239,68,68,0.2)"><span>‼️</span><span style="color:var(--danger);font-weight:700;font-size:11px">غاب الحصة اللي فاتت${lastAbsenceNote ? ' — ' + lastAbsenceNote : ''}</span></div>` : ''}
+      ${lastAbsenceNote !== null && !isAbsent && !s.isGuest ? (
+        lastAbsenceNote.type === 'compensation'
+          ? `<div style="font-size:11px;margin-top:3px;display:inline-flex;align-items:center;gap:5px;background:rgba(96,165,250,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(96,165,250,0.25)"><span>🔄</span><span style="color:#60a5fa;font-weight:700;font-size:11px">${lastAbsenceNote.note || 'جه تعويض الحصة اللي فاتت'}</span></div>`
+          : lastAbsenceNote.type === 'present-note'
+            ? `<div style="font-size:11px;margin-top:3px;display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(16,185,129,0.25)"><span>📝</span><span style="color:var(--accent3);font-weight:700;font-size:11px">${lastAbsenceNote.note}</span></div>`
+            : `<div style="font-size:11px;margin-top:3px;display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,0.08);padding:2px 10px;border-radius:6px;border:1px solid rgba(239,68,68,0.2)"><span>‼️</span><span style="color:var(--danger);font-weight:700;font-size:11px">غاب الحصة اللي فاتت${lastAbsenceNote.note ? ' — ' + lastAbsenceNote.note : ''}</span></div>`
+      ) : ''}
     </td>
     <td style="text-align:center">
       <span style="font-size:13px;font-weight:700;color:${absences > 0 ? 'var(--danger)' : 'var(--text3)'}">${absences}</span>
@@ -2787,10 +2878,24 @@ function getLastAbsenceNote(code) {
   if (idx <= 0) return null;
 
   const prevSession = centerSessions[idx - 1];
-  if (state.attendance[prevSession.id]?.[code] === 'absent') {
-    // Return note if exists, otherwise return empty string to indicate was absent
-    return state.attendance[prevSession.id + '_notes']?.[code] ?? '';
+  const prevStatus = state.attendance[prevSession.id]?.[code];
+  const prevNote   = state.attendance[prevSession.id + '_notes']?.[code] || '';
+
+  if (prevStatus === 'absent') {
+    // Check if compensation — note starts with "تعويض من"
+    if (prevNote.startsWith('\u062a\u0639\u0648\u064a\u0636 \u0645\u0646')) {
+      return { type: 'compensation', note: prevNote };
+    }
+    return { type: 'absent', note: prevNote };
   }
+
+  if (prevStatus === 'present' && prevNote) {
+    // If the note mentions compensation, treat as blue
+    const compWords = ['تعويض', 'عوض'];
+    const isComp = compWords.some(w => prevNote.includes(w));
+    return { type: isComp ? 'compensation' : 'present-note', note: prevNote };
+  }
+
   return null;
 }
 
@@ -2925,7 +3030,7 @@ function scanStudent() {
 function searchStudentInOtherGrades(code) {
   if (!db) { showToast('الكود غير موجود!', 'error'); return; }
 
-  const gradesToSearch = ['second', 'third'].filter(g => g !== currentGrade);
+  const gradesToSearch = GRADE_ORDER.filter(g => g !== currentGrade);
 
   let found = false;
   let pending = gradesToSearch.length;
@@ -3119,13 +3224,15 @@ function createQuiz() {
   // Inherit center from linked session
   const linkedSession = state.sessions.find(s => s.id === session);
   const quizCenter = linkedSession?.center || '';
-  state.quizzes.push({ id, name, total, session, center: quizCenter, date: new Date().toLocaleDateString('ar-EG') });
+  const note = document.getElementById('q-note')?.value.trim() || '';
+  state.quizzes.push({ id, name, total, session, center: quizCenter, date: new Date().toLocaleDateString('ar-EG'), note });
   state.grades[id] = {};
   saveState();
   renderQuizzes();
   openQuiz(id);
   showToast(`تم إنشاء ${name}`, 'success');
   document.getElementById('q-name').value = '';
+  if (document.getElementById('q-note')) document.getElementById('q-note').value = '';
 }
 
 function openQuiz(id) {
@@ -3135,8 +3242,15 @@ function openQuiz(id) {
 
   document.getElementById('quiz-entry-section').style.display = 'block';
   document.getElementById('active-quiz-title').textContent = `📝 ${quiz.name}`;
-  document.getElementById('active-quiz-subtitle').textContent =
-    `الدرجة الكاملة: ${quiz.total}` + (quiz.center ? ` — ${quiz.center}` : '');
+
+  // Subtitle text
+  const subtitleText = document.getElementById('active-quiz-subtitle-text');
+  if (subtitleText) subtitleText.textContent = `الدرجة الكاملة: ${quiz.total}` + (quiz.center ? ` — ${quiz.center}` : '');
+
+  // Show attendance badge only if quiz is linked to a session
+  const attBadge = document.getElementById('quiz-att-badge');
+  if (attBadge) attBadge.style.display = quiz.session ? 'inline-flex' : 'none';
+
   const searchEl = document.getElementById('grades-search');
   if (searchEl) searchEl.value = '';
 
@@ -3155,11 +3269,15 @@ function renderGradesTable(id, filter) {
   } else {
     centerStudents = state.students.filter(s => !s.center && !s.isGuest);
   }
-  // Exclude students who were compensating OUT in another center during THIS quiz's session
+  // If quiz is linked to a session — only show students who ATTENDED that session
   if (quiz.session) {
+    const sessionAtt = state.attendance[quiz.session] || {};
     centerStudents = centerStudents.filter(s => {
-      const note = state.attendance[quiz.session + '_notes']?.[s.code] || '';
-      // Remove if they compensated OUT (note = "عوض في X" meaning they went to another center)
+      const status = sessionAtt[s.code];
+      const note   = state.attendance[quiz.session + '_notes']?.[s.code] || '';
+      // Remove absent students
+      if (status === 'absent') return false;
+      // Remove students who compensated OUT to another center
       if (note.startsWith('عوض في')) return false;
       return true;
     });
@@ -3183,8 +3301,15 @@ function renderGradesTable(id, filter) {
   }
   const allStudents = [...centerStudents, ...compVisitors];
 
+  // Update badge count
+  const attBadge = document.getElementById('quiz-att-badge');
+  if (attBadge && quiz.session) {
+    attBadge.textContent = `✅ الحاضرين فقط (${allStudents.length})`;
+    attBadge.style.display = 'inline-flex';
+  }
+
   if (!allStudents.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">لا يوجد طلاب لهذا السنتر</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">لا يوجد طلاب حضروا هذه الحصة</td></tr>';
     return;
   }
 
@@ -3202,6 +3327,7 @@ function renderGradesTable(id, filter) {
     const pct = g !== '' ? Math.round((g / quiz.total) * 100) : '—';
     const color = g !== '' ? (pct >= 80 ? 'var(--accent3)' : pct >= 50 ? 'var(--warn)' : 'var(--danger)') : 'var(--text3)';
     const guestBadge = s.isGuest ? '<span style="font-size:10px;color:#a855f7;margin-right:4px">🔄</span>' : '';
+    const studentNote = state.quizNotes?.[id]?.[s.code] || '';
     return `<tr style="${s.isGuest ? 'background:rgba(168,85,247,0.04)' : ''}">
       <td>${i + 1}</td>
       <td>${guestBadge}${s.name}</td>
@@ -3209,6 +3335,7 @@ function renderGradesTable(id, filter) {
       <td><input class="score-input" type="number" min="0" max="${quiz.total}" value="${g}" placeholder="0" id="grade-${s.code}" onchange="updateGradeDisplay('${s.code}','${id}','${quiz.total}')"></td>
       <td>${quiz.total}</td>
       <td><span id="pct-${s.code}" style="font-weight:700;color:${color}">${pct}${pct !== '—' ? '%' : ''}</span></td>
+      <td><input type="text" value="${studentNote}" placeholder="ملاحظة..." id="snote-${s.code}" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 8px;color:var(--text);font-family:Cairo,sans-serif;font-size:11px;width:130px;outline:none" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)';saveStudentNote('${s.code}','${id}')"></td>
     </tr>`;
   }).join('');
 }
@@ -3217,6 +3344,60 @@ function filterGrades() {
   if (!state.activeQuiz) return;
   const q = document.getElementById('grades-search').value.trim();
   renderGradesTable(state.activeQuiz, q);
+}
+
+function saveStudentNote(code, qid) {
+  const el = document.getElementById('snote-' + code);
+  if (!el) return;
+  if (!state.quizNotes) state.quizNotes = {};
+  if (!state.quizNotes[qid]) state.quizNotes[qid] = {};
+  state.quizNotes[qid][code] = el.value.trim();
+  saveState();
+}
+
+// Sort direction tracker
+let gradesSortAsc = false;
+
+function sortGradesByScore() {
+  if (!state.activeQuiz) return;
+  const quiz = state.quizzes.find(q => q.id === state.activeQuiz);
+  if (!quiz) return;
+
+  // Save any unsaved grades first
+  const inputs = document.querySelectorAll('.score-input');
+  inputs.forEach(inp => {
+    const code = inp.id.replace('grade-', '');
+    const val = parseFloat(inp.value);
+    if (!isNaN(val)) {
+      if (!state.grades[state.activeQuiz]) state.grades[state.activeQuiz] = {};
+      state.grades[state.activeQuiz][code] = val;
+    }
+  });
+
+  gradesSortAsc = !gradesSortAsc;
+
+  // Re-render with sorted students
+  const tbody = document.getElementById('grades-tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+
+  rows.sort((a, b) => {
+    const codeA = a.querySelector('.score-input')?.id?.replace('grade-', '') || '';
+    const codeB = b.querySelector('.score-input')?.id?.replace('grade-', '') || '';
+    const gA = state.grades[state.activeQuiz]?.[codeA] ?? -1;
+    const gB = state.grades[state.activeQuiz]?.[codeB] ?? -1;
+    return gradesSortAsc ? gA - gB : gB - gA;
+  });
+
+  // Re-number and re-append
+  rows.forEach((row, i) => {
+    const firstCell = row.querySelector('td');
+    if (firstCell) firstCell.textContent = i + 1;
+    tbody.appendChild(row);
+  });
+
+  // Update button label
+  const sortBtn = document.querySelector('[onclick="sortGradesByScore()"]');
+  if (sortBtn) sortBtn.textContent = gradesSortAsc ? '🔼 ترتيب حسب الدرجة' : '🔽 ترتيب حسب الدرجة';
 }
 
 function updateGradeDisplay(code, qid, total) {
@@ -3303,12 +3484,24 @@ function collectGrades() {
         }
 
         const pct = Math.round((val / quiz.total) * 100);
+        const quiznoteVal = quiz.note ? `📌 ${quiz.note}\n\n` : '';
+        // Also save student-specific note from input if present
+        const snoteEl = document.getElementById('snote-' + s.code);
+        if (snoteEl) {
+          if (!state.quizNotes) state.quizNotes = {};
+          if (!state.quizNotes[state.activeQuiz]) state.quizNotes[state.activeQuiz] = {};
+          state.quizNotes[state.activeQuiz][s.code] = snoteEl.value.trim();
+        }
+        const studentNote = state.quizNotes?.[state.activeQuiz]?.[s.code] || '';
+        const studentNoteVal = studentNote ? `\n💬 ${studentNote}` : '';
         const msg = state.settings.gradeTemplate
           .replace('{name}', s.name)
           .replace('{quiz}', quiz.name)
           .replace('{grade}', val)
           .replace('{total}', quiz.total)
-          .replace('{percent}', pct);
+          .replace('{percent}', pct)
+          .replace('{quiznote}', quiznoteVal)
+          .replace('{studentnote}', studentNoteVal);
         messages.push({ student: s, msg });
       }
     }
@@ -3383,6 +3576,11 @@ function editQuizName(id) {
       <input type="number" id="edit-quiz-total-input" value="${quiz.total}" min="1"
         style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-family:Cairo,sans-serif;font-size:13px;width:100%;outline:none">
     </div>
+    <div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">ملاحظات الكويز <span style="opacity:0.6">(اختياري)</span></div>
+      <input type="text" id="edit-quiz-note-input" value="${quiz.note||''}" placeholder="ملاحظة ستُضاف في رسالة ولي الأمر..."
+        style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-family:Cairo,sans-serif;font-size:13px;width:100%;outline:none">
+    </div>
     <div style="display:flex;gap:8px;margin-top:4px">
       <button onclick="confirmEditQuizName('${id}')" style="flex:1;padding:9px;background:var(--accent);color:#000;border:none;border-radius:8px;font-family:Cairo,sans-serif;font-weight:700;cursor:pointer;font-size:13px">💾 حفظ</button>
       <button onclick="document.getElementById('edit-quiz-toast').remove()" style="flex:1;padding:9px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-family:Cairo,sans-serif;font-weight:700;cursor:pointer;font-size:13px">إلغاء</button>
@@ -3412,6 +3610,7 @@ function confirmEditQuizName(id) {
   if (idx === -1) return;
   state.quizzes[idx].name = newName;
   state.quizzes[idx].total = newTotal;
+  state.quizzes[idx].note = (document.getElementById('edit-quiz-note-input')?.value.trim() || '');
 
   const el = document.getElementById('edit-quiz-toast');
   if (el) el.remove();
@@ -3826,14 +4025,43 @@ function exportReportPDF() {
 // ============================================================
 //  WHATSAPP DIRECT SEND
 // ============================================================
+// Server URL — saved in localStorage
+let WA_SERVER = localStorage.getItem('wa_server_url') || '';
+
+function promptServerUrl() {
+  const current = WA_SERVER || '';
+  const url = prompt('🌐 أدخل رابط السيرفر (Cloudflare URL):', current);
+  if (url && url.trim()) {
+    WA_SERVER = url.trim().replace(/\/$/, '');
+    localStorage.setItem('wa_server_url', WA_SERVER);
+    showToast('✅ تم حفظ رابط السيرفر', 'success');
+  }
+}
+
+// إرسال manual عبر wa.me
 function sendWhatsApp(phone, message) {
-  // Clean phone: remove spaces, dashes, leading 0 → add 20 (Egypt)
   if (!phone) return;
   let p = phone.replace(/[\s\-\(\)]/g, '');
-  if (p.startsWith('0')) p = '2' + p;          // 01xxxxxxx → 201xxxxxxx
+  if (p.startsWith('0')) p = '2' + p;
   if (!p.startsWith('+')) p = '+' + p;
   const url = 'https://wa.me/' + p.replace('+','') + '?text=' + encodeURIComponent(message);
   window.open(url, '_blank');
+}
+
+// إرسال عبر السيرفر (للإرسال للكل)
+async function sendWhatsAppServer(phone, message) {
+  if (!phone) return false;
+  let p = phone.replace(/[\s\-\(\)]/g, '');
+  if (p.startsWith('0')) p = '2' + p;
+  if (!WA_SERVER) throw new Error('لم يتم تحديد رابط السيرفر');
+  const res = await fetch(WA_SERVER + '/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: p, message })
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.error);
+  return true;
 }
 
 function sendWhatsAppToParents(student, message) {
@@ -3940,6 +4168,7 @@ function sendManualMsg() {
 //  SETTINGS & QR
 // ============================================================
 function renderSettings() {
+  buildAcademicYearOptions();
   const sel = document.getElementById('qr-student-select');
   const manSel = document.getElementById('manual-recipient');
   const opts = state.students.map(s => `<option value="${s.code}">${s.name} (${s.code})</option>`).join('');
@@ -4053,7 +4282,7 @@ async function sendQRvia(code, type, phone) {
   // بعد ثانية — يفتح واتساب بالرقم
   setTimeout(() => {
     const typeName = type === 'img' ? 'صورة الـ QR' : 'PDF الـ QR';
-    const msg = `📷 بطاقة QR الطالب — Dr. Alaa Saber\n\n👤 الطالب: *${student.name}*\n🔢 الكود: ${student.code}\n\n${typeName} في المرفقات ⬆️`;
+    const msg = `📷 بطاقة QR الطالب — Mr. Ahmed Adel\n\n👤 الطالب: *${student.name}*\n🔢 الكود: ${student.code}\n\n${typeName} في المرفقات ⬆️`;
     sendWhatsApp(phone, msg);
     showToast('📲 فتح واتساب — ارفق الملف المحمّل', 'success');
   }, 800);
@@ -4182,7 +4411,7 @@ async function downloadQRPDF(code) {
     </style>
   </head><body>
     <div class="card">
-      <div class="header">Dr. Alaa Saber — بطاقة الطالب</div>
+      <div class="header">Mr. Ahmed Adel — بطاقة الطالب</div>
       <img class="qr-img" src="${imgData}" alt="QR Code">
       <div class="name">${student.name}</div>
       <div class="code">${student.code}</div>
@@ -4212,7 +4441,7 @@ function printAllQRs() {
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
     <style>body{font-family:Cairo,sans-serif;padding:20px}@media print{.no-print{display:none}}</style>
-    </head><body><h2 style="text-align:center">QR Codes — Dr. Alaa Saber</h2>
+    </head><body><h2 style="text-align:center">QR Codes — Mr. Ahmed Adel</h2>
     <div style="text-align:center">${qrContents}</div>
     <script>
       ${state.students.map(s => `new QRCode(document.getElementById('qr-print-${s.code}'),{text:'${s.code}',width:120,height:120})`).join(';')}
@@ -4253,6 +4482,8 @@ function saveSettings() {
   state.settings.centerName = document.getElementById('center-name').value;
   state.settings.teacherName = document.getElementById('teacher-name').value;
   state.settings.maxAbsence = parseInt(document.getElementById('max-absence').value) || 3;
+  const yearSel = document.getElementById('academic-year');
+  if (yearSel) state.settings.academicYear = yearSel.value;
   saveState();
   showToast('تم حفظ الإعدادات', 'success');
 }
@@ -4718,30 +4949,74 @@ function handleScannedCode(code) {
   // Build info display
   let notesHTML = '';
   if (pinnedNote) notesHTML += `<div style="font-size:12px;color:var(--warn);margin-top:4px">📌 ${pinnedNote}</div>`;
-  // Show last session note instead of absence count
+  // Show last session info with color-coded type
   if (lastAbsenceNote !== null) {
-    // Student was absent last session — show note or just a warning
-    if (lastAbsenceNote) {
-      notesHTML += `<div style="font-size:12px;color:var(--danger);margin-top:4px;background:rgba(239,68,68,0.08);padding:3px 10px;border-radius:6px;border:1px solid rgba(239,68,68,0.2)">‼️ نوت الحصة اللي فاتت: <strong>${lastAbsenceNote}</strong></div>`;
-    } else {
-      notesHTML += `<div style="font-size:12px;color:var(--danger);margin-top:4px;background:rgba(239,68,68,0.08);padding:3px 10px;border-radius:6px;border:1px solid rgba(239,68,68,0.2)">‼️ غاب الحصة اللي فاتت — مفيش نوت</div>`;
+    if (lastAbsenceNote.type === 'compensation') {
+      // 🔵 Blue — came as compensation last session
+      notesHTML += `<div style="font-size:12px;color:#60a5fa;margin-top:4px;background:rgba(96,165,250,0.08);padding:3px 10px;border-radius:6px;border:1px solid rgba(96,165,250,0.25)">🔄 ${lastAbsenceNote.note || 'جه تعويض الحصة اللي فاتت'}</div>`;
+    } else if (lastAbsenceNote.type === 'absent') {
+      // 🔴 Red — was absent last session
+      if (lastAbsenceNote.note) {
+        notesHTML += `<div style="font-size:12px;color:var(--danger);margin-top:4px;background:rgba(239,68,68,0.08);padding:3px 10px;border-radius:6px;border:1px solid rgba(239,68,68,0.2)">‼️ نوت الحصة اللي فاتت: <strong>${lastAbsenceNote.note}</strong></div>`;
+      } else {
+        notesHTML += `<div style="font-size:12px;color:var(--danger);margin-top:4px;background:rgba(239,68,68,0.08);padding:3px 10px;border-radius:6px;border:1px solid rgba(239,68,68,0.2)">‼️ غاب الحصة اللي فاتت — مفيش نوت</div>`;
+      }
+    } else if (lastAbsenceNote.type === 'present-note') {
+      // 🟢 Green — was present with a note last session
+      notesHTML += `<div style="font-size:12px;color:var(--accent3);margin-top:4px;background:rgba(16,185,129,0.08);padding:3px 10px;border-radius:6px;border:1px solid rgba(16,185,129,0.25)">📝 نوت الحصة اللي فاتت: <strong>${lastAbsenceNote.note}</strong></div>`;
     }
   }
 
-  // Show student info + continue button
+  // Show student info + note input + continue button
+  const existingNote = (state.attendance[state.currentSession + '_notes'] || {})[trimmed] || '';
   if (statusEl) statusEl.innerHTML = `
-    <div style="text-align:center">
-      <div style="font-size:18px;font-weight:900;color:var(--accent3)">✅ ${student.name}</div>
+    <div style="text-align:center;width:100%;box-sizing:border-box">
+      <div style="font-size:17px;font-weight:900;color:var(--accent3)">✅ ${student.name}</div>
       <div style="font-size:12px;color:var(--text3);margin-top:2px">${student.code}${student.center ? ' • ' + student.center : ''}</div>
       ${notesHTML}
-      <button onclick="resumeScanner()"
-        style="margin-top:10px;padding:8px 24px;background:var(--accent);color:#000;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-weight:700;font-size:13px;cursor:pointer">
+      <div style="margin-top:10px;text-align:right;width:100%">
+        <label style="font-size:11px;color:var(--text3);font-weight:700;display:block;margin-bottom:4px;text-align:right">📝 نوت الحصة الحالية</label>
+        <input id="scan-note-input" type="text" placeholder="مثال: مش عامل الواجب، تأخر..."
+          value="${existingNote.replace(/"/g,'&quot;')}"
+          style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 12px;color:#fff;font-family:Cairo,sans-serif;font-size:13px;outline:none;text-align:right;display:block"
+          onfocus="this.style.borderColor='var(--accent)'"
+          onblur="this.style.borderColor='rgba(255,255,255,0.15)'"
+          onkeydown="if(event.key==='Enter'){saveScanNote('${trimmed}');resumeScanner();}"
+        />
+      </div>
+      <button onclick="saveScanNote('${trimmed}');resumeScanner()"
+        style="width:100%;margin-top:10px;padding:10px 16px;background:linear-gradient(135deg,var(--accent),#0099bb);color:#000;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-sizing:border-box">
         ▶ متابعة
       </button>
     </div>`;
+  // Focus the note input
+  setTimeout(() => { const ni = document.getElementById('scan-note-input'); if(ni) ni.focus(); }, 50);
 
   const vid = document.getElementById('qr-video');
   if (vid) { vid.style.boxShadow = '0 0 0 5px var(--accent3)'; setTimeout(()=>{ vid.style.boxShadow=''; }, 600); }
+}
+
+function saveScanNote(code) {
+  const input = document.getElementById('scan-note-input');
+  if (!input) return;
+  const val = input.value.trim();
+  const key = state.currentSession + '_notes';
+  if (!state.attendance[key]) state.attendance[key] = {};
+  if (val) {
+    state.attendance[key][code] = val;
+  } else {
+    delete state.attendance[key][code];
+  }
+  saveState();
+  // Update the row in attendance table if visible
+  const row = document.getElementById('att-' + code);
+  if (row) {
+    const s = state.students.find(st => st.code === code);
+    if (s) {
+      const status = state.attendance[state.currentSession]?.[code] || 'present';
+      row.outerHTML = makeAttRow(s, status);
+    }
+  }
 }
 
 function resumeScanner() {
@@ -4795,7 +5070,17 @@ function closeScanner() {
 let waMessages = [];
 
 function showWAModal(messages, ref) {
+  // Enrich guest students with full phone data from state.students
+  messages = messages.map(m => {
+    if (m.student.isGuest) {
+      const full = state.students.find(s => s.code === m.student.code);
+      if (full) return { ...m, student: { ...full, isGuest: true } };
+    }
+    return m;
+  });
+
   waMessages = messages;
+  waSentCount = 0;
   document.getElementById('wa-modal-subtitle').textContent = `${messages.length} رسالة — ${ref}`;
   document.getElementById('wa-progress-label').textContent = `0 / ${messages.length}`;
   document.getElementById('wa-progress-bar').style.width = '0%';
@@ -4804,11 +5089,12 @@ function showWAModal(messages, ref) {
   list.innerHTML = messages.map((m, i) => {
     const s = m.student;
     const hasParents = s.father || s.mother;
+    const msgFormatted = m.msg.replace(/\n/g, '<br>').replace(/\*(.*?)\*/g, '<strong>$1</strong>');
     return `<div id="wa-item-${i}" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;transition:all 0.2s">
       <div style="display:flex;align-items:center;gap:12px">
         <div style="flex:1">
-          <div style="font-weight:700;font-size:14px">${s.name} <span style="font-family:monospace;font-size:11px;color:var(--text3)">${s.code}</span></div>
-          <div style="font-size:12px;color:var(--text3);margin-top:3px">${m.msg}</div>
+          <div style="font-weight:700;font-size:14px">${s.name} <span style="font-family:monospace;font-size:11px;color:var(--text3)">${s.code}</span>${s.isGuest ? ' <span style="font-size:10px;background:rgba(168,85,247,0.15);color:#a855f7;padding:1px 6px;border-radius:4px">🔄 تعويض</span>' : ''}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.7;background:var(--surface);border-radius:8px;padding:8px 10px;border:1px solid var(--border)">${msgFormatted}</div>
           <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
             ${s.phone ? `<button class="btn btn-sm" onclick="sendSingleWA(${i},'student')" id="wa-btn-${i}-student" style="background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff">
               📲 الطالب ${s.phone}
@@ -4832,27 +5118,33 @@ function showWAModal(messages, ref) {
 
 let waSentCount = 0;
 
-function sendSingleWA(idx, target) {
+async function sendSingleWA(idx, target, useServer = true) {
   const m = waMessages[idx];
   let phone;
   if (target === 'father') phone = m.student.father;
   else if (target === 'mother') phone = m.student.mother;
   else if (target === 'student') phone = m.student.phone;
   if (!phone) return;
-  sendWhatsApp(phone, m.msg);
 
-  // Mark button as sent
   const btn = document.getElementById(`wa-btn-${idx}-${target}`);
-  if (btn) { btn.textContent = '✅ تم الفتح'; btn.disabled = true; btn.style.opacity = '0.6'; }
+  if (btn) { btn.textContent = useServer ? '⏳ جارٍ...' : '⏳'; btn.disabled = true; }
+
+  if (useServer) {
+    await sendWhatsAppServer(phone, m.msg);
+  } else {
+    sendWhatsApp(phone, m.msg);
+  }
+
+  if (btn) { btn.textContent = '✅ تم'; btn.style.opacity = '0.6'; }
 
   // Check if all numbers for this student are sent → mark row green
   const row = document.getElementById(`wa-item-${idx}`);
   const sBtn = document.getElementById(`wa-btn-${idx}-student`);
   const fBtn = document.getElementById(`wa-btn-${idx}-father`);
   const mBtn = document.getElementById(`wa-btn-${idx}-mother`);
-  const sDone = !m.student.phone   || sBtn?.disabled;
-  const fDone = !m.student.father  || fBtn?.disabled;
-  const mDone = !m.student.mother  || mBtn?.disabled;
+  const sDone = !m.student.phone  || sBtn?.disabled;
+  const fDone = !m.student.father || fBtn?.disabled;
+  const mDone = !m.student.mother || mBtn?.disabled;
   if (sDone && fDone && mDone) {
     row.style.borderColor = 'var(--accent3)';
     row.style.background = 'rgba(16,185,129,0.05)';
@@ -4864,14 +5156,60 @@ function sendSingleWA(idx, target) {
   }
 }
 
-function sendAllWA() {
-  waMessages.forEach((m, i) => {
-    let delay = 0;
-    if (m.student.phone)   { setTimeout(() => sendSingleWA(i, 'student'), delay); delay += 400; }
-    if (m.student.father)  { setTimeout(() => sendSingleWA(i, 'father'),  delay); delay += 400; }
-    if (m.student.mother)  { setTimeout(() => sendSingleWA(i, 'mother'),  delay); delay += 400; }
-  });
-  showToast('📲 جارٍ فتح واتساب لكل الأرقام...', 'info');
+async function sendAllWA() {
+  if (!WA_SERVER) {
+    promptServerUrl();
+    if (!WA_SERVER) return;
+  }
+
+  // تحقق من عدد الأرقام المتاحة لتحديد الـ delay
+  let readyClients = 1;
+  try {
+    const statusRes = await fetch(WA_SERVER + '/status');
+    const statusData = await statusRes.json();
+    readyClients = statusData.ready || 1;
+  } catch(e) {}
+
+  // delay أأمن بناءً على عدد الأرقام
+  // كل رقم يبعت كل 15 ثانية → لو عندك 3 أرقام = delay 5 ثواني بين كل رسالة
+  const DELAY_PER_CLIENT = 15000;
+  const delay = Math.max(5000, Math.floor(DELAY_PER_CLIENT / readyClients));
+  console.log(`📊 أرقام جاهزة: ${readyClients} — delay: ${delay/1000} ثانية`);
+
+  const btn = document.querySelector('[onclick="sendAllWA()"]');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ جارٍ الإرسال...'; }
+
+  let sent = 0, failed = 0, banned = false;
+
+  for (let i = 0; i < waMessages.length; i++) {
+    if (banned) break;
+    const s = waMessages[i].student;
+    const target = s.mother ? 'mother' : s.father ? 'father' : null;
+    if (!target) continue;
+
+    try {
+      await sendSingleWA(i, target, true);
+      sent++;
+      showToast(`✅ ${s.name} (${sent}/${waMessages.length})`, 'success');
+    } catch(e) {
+      failed++;
+      const errMsg = e?.message || '';
+      // اكتشاف ban أو مشاكل خطيرة
+      if (errMsg.includes('rate') || errMsg.includes('spam') || errMsg.includes('banned') || failed >= 3) {
+        banned = true;
+        showToast('🚨 توقف! يبدو إن في مشكلة مع واتساب — تم إيقاف الإرسال', 'error');
+        break;
+      }
+      showToast(`⚠️ فشل: ${s.name}`, 'error');
+    }
+
+    if (i < waMessages.length - 1) {
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = '📲 إرسال للكل دفعة واحدة'; }
+  if (!banned) showToast(`✅ تم: ${sent} نجح${failed ? ' — ' + failed + ' فشل' : ''}`, 'success');
 }
 
 function editStudent(code) {
@@ -4895,11 +5233,7 @@ function saveEditStudent() {
   const emother = document.getElementById('edit-mother').value.trim();
   if (!name) { showToast('اسم الطالب مطلوب', 'error'); return; }
 
-  // لازم رقم الأب أو الأم على الأقل
-  if (!efather && !emother) {
-    showToast('⚠️ لازم رقم الأب أو الأم على الأقل', 'error');
-    return;
-  }
+  // رقم واحد على الأقل كافي (أب أو أم)
 
   // كل رقم لازم 11 رقم بالظبط
   const ePhoneFields = [
@@ -4991,7 +5325,18 @@ function buildStudentSummaryMsg(s) {
   const attRate = getStudentAttendanceRate(s.code);
   const avg = getStudentAvgGrade(s.code);
 
-  const quizLines = state.quizzes.map(q => {
+  // فلتر المحاضرات حسب سنتر الطالب بس
+  const studentCenter = s.center || '';
+  const relevantSessions = state.sessions.filter(se =>
+    studentCenter ? se.center === studentCenter : !se.center
+  );
+  const relevantTotal = relevantSessions.length;
+
+  // الكويزات بتاعت السنتر بس
+  const relevantQuizzes = state.quizzes.filter(q =>
+    studentCenter ? (q.center || '') === studentCenter : !q.center
+  );
+  const quizLines = relevantQuizzes.map(q => {
     const g = state.grades[q.id]?.[s.code];
     return g !== undefined ? '   • ' + q.name + ': ' + g + '/' + q.total : null;
   }).filter(Boolean).join('\n');
@@ -4999,8 +5344,8 @@ function buildStudentSummaryMsg(s) {
   // اجمع كل النوتات — النوت الدايم + آخر نوت محاضرة
   const pinnedNote = s.pinnedNote || '';
   const lastSessionNote = (() => {
-    for (let i = state.sessions.length - 1; i >= 0; i--) {
-      const sid = state.sessions[i].id;
+    for (let i = relevantSessions.length - 1; i >= 0; i--) {
+      const sid = relevantSessions[i].id;
       const note = state.attendance[sid + '_notes']?.[s.code] || '';
       if (note) return note;
     }
@@ -5008,7 +5353,7 @@ function buildStudentSummaryMsg(s) {
   })();
   const notes = [pinnedNote, lastSessionNote].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
 
-  let msg = '📚 *Dr. Alaa Saber*\n';
+  let msg = '📚 *Mr. Ahmed Adel*\n';
   msg += '━━━━━━━━━━━━━━━\n';
   msg += '👤 الطالب: *' + s.name + '*\n';
   msg += '🔢 الكود: ' + s.code + '\n';
@@ -5016,7 +5361,7 @@ function buildStudentSummaryMsg(s) {
   if (notes.length) msg += '📌 ملاحظة: ' + notes.join(' | ') + '\n';
   msg += '━━━━━━━━━━━━━━━\n';
   msg += '📅 *الحضور*\n';
-  msg += '   • المحاضرات: ' + totalSessions + '\n';
+  msg += '   • المحاضرات: ' + relevantTotal + '\n';
   msg += '   • الغياب: ' + absences + '\n';
   msg += '   • نسبة الحضور: ' + attRate + '%\n';
   if (quizLines) {
@@ -5116,12 +5461,17 @@ function selectMsgType(type) {
     else {
       const g = state.grades[qid]?.[s.code];
       const pct = g !== undefined ? Math.round((g / quiz.total) * 100) : null;
-      preview = `📝 *نتيجة ${quiz.name} — Dr. Alaa Saber*
-
-ولي أمر الطالب/ة *${s.name}*،
-الدرجة: *${g !== undefined ? g : '—'}/${quiz.total}*${pct !== null ? ` (${pct}%)` : ''}
-
-للاستفسار يرجى التواصل. 📚`;
+      const quiznoteVal = quiz.note ? `📌 ${quiz.note}\n\n` : '';
+      const studentNote = state.quizNotes?.[qid]?.[s.code] || '';
+      const studentNoteVal = studentNote ? `\n💬 ${studentNote}` : '';
+      preview = state.settings.gradeTemplate
+        .replace('{quiznote}', quiznoteVal)
+        .replace('{quiz}', quiz.name)
+        .replace('{name}', s.name)
+        .replace('{grade}', g !== undefined ? g : '—')
+        .replace('{total}', quiz.total)
+        .replace('{percent}', pct !== null ? pct : '—')
+        .replace('{studentnote}', studentNoteVal);
       if (msgPickerTargets.length > 1) preview += '\n\n(سيتم تخصيص الدرجات لكل طالب)';
     }
   } else if (type === 'session-absence') {
@@ -5131,24 +5481,17 @@ function selectMsgType(type) {
     else {
       const wasAbsent = state.attendance[sid]?.[s.code] === 'absent';
       if (msgPickerTargets.length === 1) {
-        preview = wasAbsent
-          ? `❌ *غياب — Dr. Alaa Saber*
-
-ولي أمر الطالب/ة *${s.name}*،
-نود إعلامكم بغياب ابنكم/ابنتكم عن ${session.name} بتاريخ ${session.date}.
-
-نرجو الاهتمام بالحضور المنتظم. 🙏`
-          : `✅ الطالب ${s.name} كان حاضراً في ${session.name} — لن يتم إرسال رسالة`;
+        const absenceMsg = state.settings.absenceTemplate
+          .replace(/{name}/g, s.name).replace(/{code}/g, s.code)
+          .replace(/{session}/g, session.name).replace(/{date}/g, session.date)
+          .replace(/{absences}/g, getStudentAbsences(s.code));
+        preview = wasAbsent ? absenceMsg : `✅ الطالب ${s.name} كان حاضراً في ${session.name} — لن يتم إرسال رسالة`;
       } else {
         const absentCount = msgPickerTargets.filter(st => state.attendance[sid]?.[st.code] === 'absent').length;
-        preview = `❌ *غياب ${session.name} — Dr. Alaa Saber*
-
-ولي أمر الطالب/ة *{name}*،
-نود إعلامكم بغياب ابنكم/ابنتكم عن ${session.name} بتاريخ ${session.date}.
-
-نرجو الاهتمام بالحضور المنتظم. 🙏
-
-(سيتم الإرسال لـ ${absentCount} طالب غائب فقط)`;
+        preview = state.settings.absenceTemplate
+          .replace(/{name}/g, '{name}').replace(/{code}/g, '{code}')
+          .replace(/{session}/g, session.name).replace(/{date}/g, session.date)
+          .replace(/{absences}/g, '—') + `\n\n(سيتم الإرسال لـ ${absentCount} طالب غائب فقط)`;
       }
     }
   } else if (type === 'custom') {
@@ -5176,25 +5519,28 @@ function buildFinalMsg(type, student) {
     if (!quiz) return '';
     const g = state.grades[qid]?.[student.code];
     const pct = g !== undefined ? Math.round((g / quiz.total) * 100) : null;
-    return `📝 *نتيجة ${quiz.name} — Dr. Alaa Saber*
-
-ولي أمر الطالب/ة *${student.name}*،
-الدرجة: *${g !== undefined ? g : '—'}/${quiz.total}*${pct !== null ? ` (${pct}%)` : ''}
-
-للاستفسار يرجى التواصل. 📚`;
+    const quiznoteVal = quiz.note ? `📌 ${quiz.note}\n\n` : '';
+    const studentNote = state.quizNotes?.[qid]?.[student.code] || '';
+    const studentNoteVal = studentNote ? `\n💬 ${studentNote}` : '';
+    return state.settings.gradeTemplate
+      .replace('{quiznote}', quiznoteVal)
+      .replace('{quiz}', quiz.name)
+      .replace('{name}', student.name)
+      .replace('{grade}', g !== undefined ? g : '—')
+      .replace('{total}', quiz.total)
+      .replace('{percent}', pct !== null ? pct : '—')
+      .replace('{studentnote}', studentNoteVal);
   }
   if (type === 'session-absence') {
     const sid = document.getElementById('msg-picker-session-select').value;
     const session = state.sessions.find(se => se.id === sid);
     if (!session) return '';
     const wasAbsent = state.attendance[sid]?.[student.code] === 'absent';
-    if (!wasAbsent) return null; // skip present students
-    return `❌ *غياب — Dr. Alaa Saber*
-
-ولي أمر الطالب/ة *${student.name}*،
-نود إعلامكم بغياب ابنكم/ابنتكم عن ${session.name} بتاريخ ${session.date}.
-
-نرجو الاهتمام بالحضور المنتظم. 🙏`;
+    if (!wasAbsent) return null;
+    return state.settings.absenceTemplate
+      .replace(/{name}/g, student.name).replace(/{code}/g, student.code)
+      .replace(/{session}/g, session.name).replace(/{date}/g, session.date)
+      .replace(/{absences}/g, getStudentAbsences(student.code));
   }
   if (type === 'custom') {
     const custVal = document.getElementById('msg-picker-custom-input').value;
@@ -5219,6 +5565,46 @@ function confirmMsgPicker() {
   showWAModal(messages, active.querySelector('.msg-label')?.textContent || '');
 }
 
+
+async function sendQROne(s) {
+  const canvas = await _generateQRCanvas(s.code, 400);
+  const dataUrl = canvas.toDataURL('image/png');
+  const base64 = dataUrl.split(',')[1];
+  if (!base64 || base64.length < 100) throw new Error('QR generation failed');
+  const phone = s.mother || s.father;
+  let p = phone.replace(/[\s\-\(\)]/g, '');
+  if (p.startsWith('0')) p = '2' + p;
+  const msg = `📷 بطاقة QR الطالب — Mr. Ahmed Adel\n\n👤 الطالب: *${s.name}*\n🔢 الكود: ${s.code}`;
+  const res = await fetch(WA_SERVER + '/send-image', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone: p, message: msg, image: base64 })
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.error);
+}
+
+async function sendQRAll() {
+  const students = state.students.filter(s => s.mother || s.father);
+  if (!students.length) { showToast('لا يوجد طلاب بأرقام', 'error'); return; }
+  if (!confirm(`سيتم إرسال QR لـ ${students.length} طالب. هل أنت متأكد؟`)) return;
+  showToast(`⏳ جارٍ إرسال QR لـ ${students.length} طالب...`, 'info');
+  let sent = 0, failed = 0;
+  for (const s of students) {
+    try {
+      await sendQROne(s);
+      sent++;
+      showToast(`✅ ${s.name} (${sent}/${students.length})`, 'success');
+    } catch (e) {
+      failed++;
+      console.error(s.name, e);
+      showToast(`⚠️ فشل إرسال QR لـ ${s.name}`, 'error');
+    }
+    await new Promise(r => setTimeout(r, 15000));
+  }
+  showToast(`✅ تم: ${sent} نجح — ${failed} فشل`, 'success');
+}
+
 // Bottom nav active state
 function setBottomNav(page) {
   document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
@@ -5235,6 +5621,8 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
 // INIT
 updateBadge();
 renderDashboard();
+renderGradeChoices();
+buildAcademicYearOptions();
 
 // Start Firebase after page loads
 window.addEventListener('load', () => {
