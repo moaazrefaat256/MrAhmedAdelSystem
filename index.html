@@ -795,6 +795,8 @@
       <div style="width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 8px"></div>
       جارٍ تسجيل الدخول...
     </div>
+
+    <div style="margin-top:28px;font-size:11px;color:var(--text3);letter-spacing:0.3px">Created by: Moaaz Refaat</div>
   </div>
 </div>
 
@@ -904,6 +906,7 @@
         <div class="teacher-role">مدير السنتر</div>
       </div>
     </div>
+    <div style="text-align:center; font-size:10px; color:var(--text3); margin-top:10px; letter-spacing:0.3px;">Created by: Moaaz Refaat</div>
   </div>
 </nav>
 
@@ -1794,7 +1797,7 @@ function initAuth() {
   try {
     auth = firebase.auth();
 
-    const ALLOWED = ['mrahmedadelassistant1@gmail.com'];
+    const ALLOWED = ['mrahmedadelassistant1@gmail.com', 'faya34178@gmail.com', 'ziadibrahim033@gmail.com'];
 
     auth.onAuthStateChanged(user => {
       currentUser = user;
