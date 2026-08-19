@@ -875,6 +875,14 @@
     <span>الطلاب</span>
     <span class="nav-badge" id="students-badge">0</span>
   </div>
+  <div class="nav-item" onclick="showPage('centers')">
+    <span class="icon">🏢</span>
+    <span>السناتر</span>
+  </div>
+  <div class="nav-item" onclick="showPage('groups')">
+    <span class="icon">👥</span>
+    <span>المجاميع</span>
+  </div>
   <div class="nav-item" onclick="showPage('attendance')">
     <span class="icon">✅</span>
     <span>الحضور</span>
@@ -1047,10 +1055,16 @@
                 <input type="tel" id="s-mother" placeholder="01xxxxxxxxx">
               </div>
               <div class="form-group">
-                <label>السنتر / المجموعة</label>
-<input type="text" id="s-center" placeholder="مثال: مجموعة A" list="center-datalist"
-  oninput="this.value=this.value" autocomplete="off">
-<datalist id="center-datalist"></datalist>
+                <label>السنتر *</label>
+                <select id="s-center-select" onchange="populateGroupSelect('s-group-select', this.value)">
+                  <option value="">اختر السنتر</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>المجموعة *</label>
+                <select id="s-group-select" disabled>
+                  <option value="">اختر السنتر أولاً</option>
+                </select>
               </div>
             </div>
             <button class="btn btn-primary" onclick="addStudent()">➕ إضافة الطالب</button>
@@ -1089,18 +1103,101 @@
       </div>
     </div>
 
+    <!-- ===== CENTERS ===== -->
+    <div class="page" id="page-centers">
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🏢 السناتر</div>
+            <div class="card-subtitle" id="centers-count-label">0 سنتر مسجل</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAddCenterModal()">➕ Add Center</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>اسم السنتر</th><th>عدد المجموعات</th><th>عدد الطلاب</th><th>الإجراءات</th></tr></thead>
+            <tbody id="centers-tbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text3);padding:40px">لا يوجد سناتر مسجلة — اضغط "Add Center" لإضافة أول سنتر</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GROUPS ===== -->
+    <div class="page" id="page-groups">
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header">
+          <div class="card-title">👥 إضافة مجموعة جديدة</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>المرحلة الدراسية</label>
+              <input type="text" id="grp-stage-display" readonly style="background:rgba(0,212,255,0.05);border-color:rgba(0,212,255,0.2);color:var(--accent);font-weight:700">
+            </div>
+            <div class="form-group">
+              <label>السنتر *</label>
+              <select id="grp-center-select" onchange="onGroupCenterSelectChange()">
+                <option value="">اختر السنتر</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>اسم المجموعة *</label>
+              <input type="text" id="grp-name-input" placeholder="مثال: مجموعة الجمعة 5 عصراً">
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="addGroup()">➕ إضافة المجموعة</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">قائمة المجاميع</div>
+            <div class="card-subtitle" id="groups-count-label">0 مجموعة مسجلة</div>
+          </div>
+          <select id="groups-filter-center" onchange="renderGroups()" style="font-size:13px;padding:8px 12px;width:200px">
+            <option value="">كل السناتر</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>اسم المجموعة</th><th>السنتر</th><th>عدد الطلاب</th><th>الإجراءات</th></tr></thead>
+            <tbody id="groups-tbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text3);padding:40px">لا يوجد مجاميع — أضف سنتر أولاً ثم أضف مجموعة</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== ATTENDANCE ===== -->
     <div class="page" id="page-attendance">
       <div class="card" style="margin-bottom:20px">
         <div class="card-header">
           <div class="card-title">📅 إدارة المحاضرات</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select id="att-center-filter" onchange="onAttCenterChange()" style="font-size:13px;padding:8px 12px;width:180px">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <select id="att-center-filter" onchange="onAttCenterChange()" style="font-size:13px;padding:8px 12px;width:150px">
               <option value="">كل السنترات</option>
             </select>
             <button class="btn btn-secondary btn-sm" onclick="renderAttendance()">🔄</button>
-            <button class="btn btn-primary btn-sm" onclick="addSession()">➕ محاضرة جديدة</button>
           </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;padding:14px 20px 20px;background:var(--surface2);border-radius:12px;margin:0 20px 16px">
+          <div class="form-group" style="margin:0;min-width:160px;flex:1">
+            <label style="font-size:11px">السنتر *</label>
+            <select id="att-new-center-select" onchange="populateGroupSelect('att-new-group-select', this.value)" style="width:100%">
+              <option value="">اختر السنتر</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0;min-width:160px;flex:1">
+            <label style="font-size:11px">المجموعة *</label>
+            <select id="att-new-group-select" disabled style="width:100%">
+              <option value="">اختر السنتر أولاً</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addSession()" style="white-space:nowrap">➕ محاضرة جديدة</button>
         </div>
         <div class="session-pills" id="session-pills">
           <div style="color:var(--text3);font-size:13px;padding:8px">لا يوجد محاضرات — أضف محاضرة جديدة</div>
@@ -1535,6 +1632,27 @@
   </div>
 </div>
 
+<!-- ADD/EDIT CENTER MODAL -->
+<div class="modal-overlay" id="center-modal">
+  <div class="modal" style="width:420px">
+    <div class="modal-header">
+      <div class="modal-title" id="center-modal-title">🏢 Add Center</div>
+      <button class="close-btn" onclick="closeModal('center-modal')">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <input type="hidden" id="center-modal-id">
+      <div class="form-group">
+        <label>اسم السنتر *</label>
+        <input type="text" id="center-modal-name" placeholder="مثال: سنتر النور" onkeydown="if(event.key==='Enter') confirmCenterModal()">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" style="flex:1" onclick="confirmCenterModal()">💾 حفظ</button>
+        <button class="btn btn-secondary" onclick="closeModal('center-modal')">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- EDIT STUDENT MODAL -->
 <div class="modal-overlay" id="edit-student-modal">
   <div class="modal" style="width:520px">
@@ -1566,9 +1684,16 @@
           <input type="tel" id="edit-mother" placeholder="01xxxxxxxxx">
         </div>
         <div class="form-group">
-          <label>السنتر / المجموعة</label>
-          <input type="text" id="edit-center" placeholder="مجموعة A" list="edit-center-datalist">
-          <datalist id="edit-center-datalist"></datalist>
+          <label>السنتر *</label>
+          <select id="edit-center-select" onchange="populateGroupSelect('edit-group-select', this.value)">
+            <option value="">اختر السنتر</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>المجموعة *</label>
+          <select id="edit-group-select" disabled>
+            <option value="">اختر السنتر أولاً</option>
+          </select>
         </div>
       </div>
       <div style="display:flex;gap:10px;margin-top:8px">
@@ -1643,6 +1768,8 @@ let state = {
   quizzes: [],
   grades: {}, // { quizId: { studentCode: number } }
   notifications: [],
+  centers: [],  // [{ id, name }] — organizational centers for the current stage (currentGrade)
+  groups: [],   // [{ id, name, centerId }] — groups belong to a center within the current stage
   settings: {
     centerName: 'Mr. Ahmed Adel',
     teacherName: 'أ. محمد أحمد',
@@ -1782,6 +1909,8 @@ function refreshCurrentPage() {
   const pageId = activePage.id.replace('page-', '');
   if (pageId === 'dashboard')     renderDashboard();
   else if (pageId === 'students') renderStudents();
+  else if (pageId === 'centers')  renderCenters();
+  else if (pageId === 'groups')   renderGroups();
   else if (pageId === 'attendance') renderAttendance();
   else if (pageId === 'quizzes')  renderQuizzes();
   else if (pageId === 'reports')  renderReports();
@@ -1926,10 +2055,10 @@ function selectGrade(grade) {
   // Hide overlay IMMEDIATELY
   const overlay = document.getElementById('grade-selector-overlay');
   if (overlay) overlay.style.display = 'none';
-  setTimeout(updateCenterDatalist, 100);
+  setTimeout(populateCenterDropdowns, 100);
 
   // Reset state
-  state = { students:[], sessions:[], attendance:{}, quizzes:[], grades:{}, notifications:[], settings: state.settings };
+  state = { students:[], sessions:[], attendance:{}, quizzes:[], grades:{}, notifications:[], centers:[], groups:[], settings: state.settings };
   updateBadge();
   renderDashboard();
 
@@ -2042,6 +2171,8 @@ function onAcademicYearChange() {
 const pageConfig = {
   dashboard: { title: 'Dashboard', subtitle: 'نظرة عامة على السنتر', actions: '' },
   students: { title: 'الطلاب', subtitle: 'إدارة بيانات الطلاب', actions: '' },
+  centers: { title: 'السناتر', subtitle: 'إدارة السناتر', actions: '' },
+  groups: { title: 'المجاميع', subtitle: 'إدارة المجموعات لكل سنتر', actions: '' },
   attendance: { title: 'الحضور', subtitle: 'تسجيل حضور الطلاب', actions: '' },
   quizzes: { title: 'الكويزات', subtitle: 'إدخال وإدارة الدرجات', actions: '' },
   reports: { title: 'التقارير', subtitle: 'إحصائيات وتحليلات', actions: '' },
@@ -2067,6 +2198,8 @@ function showPage(name) {
     renderDashboard();
     }
   if (name === 'students') { renderStudents(); setTimeout(()=>{ const el=document.getElementById('s-code'); if(el&&!el.value) el.value=generateCode(); },50); }
+  if (name === 'centers') renderCenters();
+  if (name === 'groups') renderGroups();
   if (name === 'attendance') renderAttendance();
   if (name === 'quizzes') renderQuizzes();
   if (name === 'reports') renderReports();
@@ -2078,31 +2211,239 @@ function showPage(name) {
 //  STUDENTS
 // ============================================================
 // ============================================================
-//  SAVED CENTERS (per grade)
+//  CENTERS (per stage/grade — stored in state.centers, synced via Firebase)
 // ============================================================
-function getSavedCenters() {
-  const key = 'chm-centers-' + (currentGrade || 'general');
-  try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { return []; }
+function ensureCentersGroups() {
+  if (!Array.isArray(state.centers)) state.centers = [];
+  if (!Array.isArray(state.groups)) state.groups = [];
 }
 
-function saveCenterToList(center) {
-  if (!center) return;
-  const key = 'chm-centers-' + (currentGrade || 'general');
-  const list = getSavedCenters();
-  if (!list.includes(center)) {
-    list.push(center);
-    localStorage.setItem(key, JSON.stringify(list));
-    updateCenterDatalist();
+function getCenterById(id) {
+  ensureCentersGroups();
+  return state.centers.find(c => c.id === id);
+}
+
+function getGroupById(id) {
+  ensureCentersGroups();
+  return state.groups.find(g => g.id === id);
+}
+
+function getGroupsForCenter(centerId) {
+  ensureCentersGroups();
+  return state.groups.filter(g => g.centerId === centerId);
+}
+
+function openAddCenterModal() {
+  document.getElementById('center-modal-id').value = '';
+  document.getElementById('center-modal-name').value = '';
+  document.getElementById('center-modal-title').textContent = '🏢 Add Center';
+  openModal('center-modal');
+  setTimeout(() => document.getElementById('center-modal-name').focus(), 100);
+}
+
+function openEditCenterModal(id) {
+  const c = getCenterById(id);
+  if (!c) return;
+  document.getElementById('center-modal-id').value = c.id;
+  document.getElementById('center-modal-name').value = c.name;
+  document.getElementById('center-modal-title').textContent = '✏️ تعديل السنتر';
+  openModal('center-modal');
+  setTimeout(() => document.getElementById('center-modal-name').focus(), 100);
+}
+
+function confirmCenterModal() {
+  ensureCentersGroups();
+  const id = document.getElementById('center-modal-id').value;
+  const name = document.getElementById('center-modal-name').value.trim();
+  if (!name) { showToast('اكتب اسم السنتر', 'error'); return; }
+
+  if (id) {
+    // Edit existing
+    const idx = state.centers.findIndex(c => c.id === id);
+    if (idx === -1) return;
+    if (state.centers.some(c => c.id !== id && c.name === name)) {
+      showToast('يوجد سنتر بنفس الاسم بالفعل', 'error'); return;
+    }
+    state.centers[idx].name = name;
+    showToast('تم تعديل السنتر', 'success');
+  } else {
+    // Add new
+    if (state.centers.some(c => c.name === name)) {
+      showToast('يوجد سنتر بنفس الاسم بالفعل', 'error'); return;
+    }
+    state.centers.push({ id: 'center-' + Date.now(), name });
+    showToast('تم إضافة السنتر بنجاح', 'success');
+  }
+
+  saveState();
+  closeModal('center-modal');
+  renderCenters();
+  renderGroups();
+  populateCenterDropdowns();
+}
+
+function deleteCenter(id) {
+  ensureCentersGroups();
+  const c = getCenterById(id);
+  if (!c) return;
+  const groupsCount = getGroupsForCenter(id).length;
+  const studentsCount = state.students.filter(s => s.centerId === id).length;
+  if (groupsCount > 0 || studentsCount > 0) {
+    showToast(`⚠️ لا يمكن حذف "${c.name}" — مرتبط بـ ${groupsCount} مجموعة و ${studentsCount} طالب`, 'error');
+    return;
+  }
+  if (!confirm(`هل أنت متأكد من حذف السنتر "${c.name}"؟`)) return;
+  state.centers = state.centers.filter(x => x.id !== id);
+  saveState();
+  renderCenters();
+  renderGroups();
+  populateCenterDropdowns();
+  showToast('تم حذف السنتر', 'info');
+}
+
+function renderCenters() {
+  ensureCentersGroups();
+  const tbody = document.getElementById('centers-tbody');
+  if (!tbody) return;
+  const label = document.getElementById('centers-count-label');
+  if (label) label.textContent = `${state.centers.length} سنتر مسجل`;
+
+  if (!state.centers.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:40px">لا يوجد سناتر مسجلة — اضغط "Add Center" لإضافة أول سنتر</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = state.centers.map((c, i) => {
+    const groupsCount = getGroupsForCenter(c.id).length;
+    const studentsCount = state.students.filter(s => s.centerId === c.id).length;
+    return `<tr>
+      <td>${i + 1}</td>
+      <td><strong>${c.name}</strong></td>
+      <td><span class="badge badge-blue">${groupsCount} مجموعة</span></td>
+      <td>${studentsCount}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="openEditCenterModal('${c.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCenter('${c.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// Populates every "Center" <select> across the app (student form, edit-student modal,
+// groups page, attendance new-session picker) from the single state.centers source of truth.
+function populateCenterDropdowns() {
+  ensureCentersGroups();
+  const opts = '<option value="">اختر السنتر</option>' + state.centers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  ['s-center-select', 'edit-center-select', 'grp-center-select', 'att-new-center-select'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const cur = el.value;
+    el.innerHTML = opts;
+    if (state.centers.some(c => c.id === cur)) el.value = cur;
+  });
+  const filterEl = document.getElementById('groups-filter-center');
+  if (filterEl) {
+    const cur = filterEl.value;
+    filterEl.innerHTML = '<option value="">كل السناتر</option>' + state.centers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    if (state.centers.some(c => c.id === cur)) filterEl.value = cur;
   }
 }
 
-function updateCenterDatalist() {
-  const centers = getSavedCenters();
-  const opts = centers.map(c => `<option value="${c}">`).join('');
-  ['center-datalist', 'edit-center-datalist'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = opts;
-  });
+// ============================================================
+//  GROUPS (per center, within the current stage/grade)
+// ============================================================
+function onGroupCenterSelectChange() {
+  // No-op hook kept for future filtering needs; groups list re-renders on demand.
+}
+
+function addGroup() {
+  ensureCentersGroups();
+  const centerId = document.getElementById('grp-center-select').value;
+  const name = document.getElementById('grp-name-input').value.trim();
+  if (!centerId) { showToast('اختر السنتر أولاً', 'error'); return; }
+  if (!name) { showToast('اكتب اسم المجموعة', 'error'); return; }
+  if (state.groups.some(g => g.centerId === centerId && g.name === name)) {
+    showToast('يوجد مجموعة بنفس الاسم في هذا السنتر بالفعل', 'error'); return;
+  }
+  state.groups.push({ id: 'group-' + Date.now(), name, centerId });
+  saveState();
+  document.getElementById('grp-name-input').value = '';
+  renderGroups();
+  renderCenters();
+  showToast('تم إضافة المجموعة بنجاح', 'success');
+}
+
+function deleteGroup(id) {
+  ensureCentersGroups();
+  const g = getGroupById(id);
+  if (!g) return;
+  const studentsCount = state.students.filter(s => s.groupId === id).length;
+  if (studentsCount > 0) {
+    showToast(`⚠️ لا يمكن حذف "${g.name}" — مرتبطة بـ ${studentsCount} طالب`, 'error');
+    return;
+  }
+  if (!confirm(`هل أنت متأكد من حذف مجموعة "${g.name}"؟`)) return;
+  state.groups = state.groups.filter(x => x.id !== id);
+  saveState();
+  renderGroups();
+  renderCenters();
+  showToast('تم حذف المجموعة', 'info');
+}
+
+function renderGroups() {
+  ensureCentersGroups();
+  populateCenterDropdowns();
+
+  // Stage display (read-only — the currently selected academic stage)
+  const stageDisplay = document.getElementById('grp-stage-display');
+  if (stageDisplay) stageDisplay.value = (GRADES[currentGrade] && GRADES[currentGrade].name) || '—';
+
+  const filterCenterId = document.getElementById('groups-filter-center')?.value || '';
+  const filtered = filterCenterId ? state.groups.filter(g => g.centerId === filterCenterId) : state.groups;
+
+  const tbody = document.getElementById('groups-tbody');
+  const label = document.getElementById('groups-count-label');
+  if (label) label.textContent = `${state.groups.length} مجموعة مسجلة`;
+  if (!tbody) return;
+
+  if (!state.centers.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:40px">أضف سنتر أولاً من قسم "السناتر" ثم أضف مجموعة</td></tr>`;
+    return;
+  }
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:40px">لا يوجد مجاميع — أضف مجموعة جديدة من الأعلى</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((g, i) => {
+    const center = getCenterById(g.centerId);
+    const studentsCount = state.students.filter(s => s.groupId === g.id).length;
+    return `<tr>
+      <td>${i + 1}</td>
+      <td><strong>${g.name}</strong></td>
+      <td>${center ? `<span class="badge badge-blue">${center.name}</span>` : '<span style="color:var(--text3)">—</span>'}</td>
+      <td>${studentsCount}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-danger btn-sm" onclick="deleteGroup('${g.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// Fills a <select> with the groups belonging to a given center. Used by the student
+// form, edit-student modal, and the attendance new-session picker.
+function populateGroupSelect(selectId, centerId, currentValue) {
+  const el = document.getElementById(selectId);
+  if (!el) return;
+  const groups = centerId ? getGroupsForCenter(centerId) : [];
+  el.innerHTML = '<option value="">' + (centerId ? 'اختر المجموعة' : 'اختر السنتر أولاً') + '</option>' +
+    groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+  el.disabled = !centerId;
+  if (currentValue && groups.some(g => g.id === currentValue)) el.value = currentValue;
 }
 
 function getYearPrefix() {
@@ -2151,10 +2492,19 @@ function addStudent() {
   const phone = document.getElementById('s-phone').value.trim();
   const father = document.getElementById('s-father').value.trim();
   const mother = document.getElementById('s-mother').value.trim();
-  const center = document.getElementById('s-center').value.trim();
-  if (center) saveCenterToList(center);
+  const centerId = document.getElementById('s-center-select').value;
+  const groupId = document.getElementById('s-group-select').value;
 
   if (!name || !code) { showToast('الاسم والكود مطلوبان', 'error'); return; }
+
+  if (!centerId || !groupId) {
+    showToast('⚠️ يجب اختيار السنتر والمجموعة أولاً', 'error');
+    return;
+  }
+  const centerObj = getCenterById(centerId);
+  const groupObj = getGroupById(groupId);
+  const center = groupObj ? groupObj.name : ''; // kept for backward compatibility with existing filters/reports
+
   if (state.students.find(s => s.code === code)) {
     // Flash the code input red to show the conflict
     const codeInput = document.getElementById('s-code');
@@ -2210,7 +2560,7 @@ function addStudent() {
     }
   }
 
-  state.students.push({ name, code, phone, father, mother, center });
+  state.students.push({ name, code, phone, father, mother, center, centerId, groupId });
 
   // Add as absent in all existing sessions
   state.sessions.forEach(session => {
@@ -2221,12 +2571,17 @@ function addStudent() {
   saveState();
   clearStudentForm();
   renderStudents();
+  renderCenters();
+  renderGroups();
   updateBadge();
   showToast(`تم إضافة ${name} بنجاح`, 'success');
 }
 
 function clearStudentForm() {
-  ['s-name','s-phone','s-father','s-mother','s-center'].forEach(id => document.getElementById(id).value = '');
+  ['s-name','s-phone','s-father','s-mother'].forEach(id => document.getElementById(id).value = '');
+  const centerSel = document.getElementById('s-center-select');
+  if (centerSel) centerSel.value = '';
+  populateGroupSelect('s-group-select', '');
   document.getElementById('s-code').value = generateCode();
 }
 
@@ -2304,7 +2659,7 @@ function renderStudentsTable(filter = '', centerFilter = '') {
       <td>${i + 1}</td>
       <td><strong>${s.name}</strong></td>
       <td><span style="font-family:monospace;font-size:12px;background:var(--surface2);padding:2px 8px;border-radius:6px">${s.code}</span></td>
-      <td>${s.center ? `<span class="badge badge-blue">${s.center}</span>` : '—'}</td>
+      <td>${s.center ? (s.groupId ? `<span class="badge badge-blue">${s.center}</span>` : `<span class="badge badge-warn" title="مستورد من Excel — يحتاج ربط بسنتر/مجموعة">${s.center} ⚠️</span>`) : '—'}</td>
       <td>${s.phone || '—'}</td>
       <td>${s.father || '—'}</td>
       <td>${s.mother || '—'}</td>
@@ -2438,13 +2793,9 @@ function handleExcelUpload(e) {
         added++;
       });
 
-      // Save all unique centers from uploaded data to datalist
-      const newCenters = [...new Set(
-        data.slice(1)
-          .map(row => row[5] ? String(row[5]).trim() : '')
-          .filter(Boolean)
-      )];
-      newCenters.forEach(c => saveCenterToList(c));
+      // Note: Excel import keeps the free-text "center" column for backward compatibility
+      // (bulk rows aren't linked to a structured Center/Group — the user can assign those
+      // per-student afterwards from the "تعديل" (edit) button in the students table).
 
       saveState();
       renderStudents();
@@ -2591,19 +2942,28 @@ function onAttCenterChange() {
 }
 
 function addSession() {
-  const centerFilter = getAttCenterFilter();
-  // Count sessions for this center to number them correctly
-  const centerSessions = state.sessions.filter(s => (s.center || '') === centerFilter);
-  const num = centerSessions.length + 1;
+  const centerId = document.getElementById('att-new-center-select')?.value || '';
+  const groupId  = document.getElementById('att-new-group-select')?.value || '';
+
+  if (!centerId || !groupId) {
+    showToast('⚠️ يجب اختيار السنتر والمجموعة أولاً لإنشاء المحاضرة', 'error');
+    return;
+  }
+
+  const centerObj = getCenterById(centerId);
+  const groupObj = getGroupById(groupId);
+  const groupName = groupObj ? groupObj.name : '';
+
+  // Count sessions for this group to number them correctly
+  const groupSessions = state.sessions.filter(s => (s.center || '') === groupName);
+  const num = groupSessions.length + 1;
   const today = new Date().toLocaleDateString('ar-EG');
   const id = 'session-' + Date.now();
-  const sessionName = centerFilter ? `${centerFilter} — محاضرة ${num}` : `محاضرة ${num}`;
-  state.sessions.push({ id, name: sessionName, date: today, center: centerFilter });
+  const sessionName = `${groupName} — محاضرة ${num}`;
+  state.sessions.push({ id, name: sessionName, date: today, center: groupName, centerId, groupId });
   state.attendance[id] = {};
-  // default absent only for students of this center (or all if no filter)
-  const relevantStudents = centerFilter
-    ? state.students.filter(s => s.center === centerFilter)
-    : state.students;
+  // default absent only for students of this group
+  const relevantStudents = state.students.filter(s => s.groupId === groupId);
   relevantStudents.forEach(s => state.attendance[id][s.code] = 'absent');
   saveState();
   renderAttendance();
@@ -2625,7 +2985,7 @@ function selectSession(id) {
 }
 
 function renderAttendance() {
-  // Populate center filter dropdown
+  // Populate center filter dropdown (view filter — free text, unrelated to the create-session requirement)
   const centerFilter = document.getElementById('att-center-filter');
   if (centerFilter) {
     const centers = [...new Set(state.students.map(s => s.center).filter(Boolean))];
@@ -2633,6 +2993,11 @@ function renderAttendance() {
     centerFilter.innerHTML = '<option value="">كل السنترات</option>' +
       centers.map(c => `<option value="${c}" ${c===cur?'selected':''}>${c}</option>`).join('');
   }
+
+  // Populate the "new session" Center/Group required selects
+  populateCenterDropdowns();
+  const newGroupSel = document.getElementById('att-new-group-select');
+  if (newGroupSel) populateGroupSelect('att-new-group-select', document.getElementById('att-new-center-select')?.value || '');
 
   // Filter sessions by selected center
   const selectedCenter = getAttCenterFilter();
@@ -5307,7 +5672,10 @@ function editStudent(code) {
   document.getElementById('edit-phone').value = s.phone || '';
   document.getElementById('edit-father').value = s.father || '';
   document.getElementById('edit-mother').value = s.mother || '';
-  document.getElementById('edit-center').value = s.center || '';
+  populateCenterDropdowns();
+  const centerSel = document.getElementById('edit-center-select');
+  if (centerSel) centerSel.value = s.centerId || '';
+  populateGroupSelect('edit-group-select', s.centerId || '', s.groupId || '');
   openModal('edit-student-modal');
 }
 
@@ -5359,6 +5727,14 @@ function saveEditStudent() {
     }
   }
 
+  const centerId = document.getElementById('edit-center-select').value;
+  const groupId  = document.getElementById('edit-group-select').value;
+  if (!centerId || !groupId) {
+    showToast('⚠️ يجب اختيار السنتر والمجموعة', 'error');
+    return;
+  }
+  const groupObj = getGroupById(groupId);
+
   const idx = state.students.findIndex(s => s.code === originalCode);
   if (idx === -1) return;
 
@@ -5368,11 +5744,15 @@ function saveEditStudent() {
     phone:  ephone,
     father: efather,
     mother: emother,
-    center: (() => { const c = document.getElementById('edit-center').value.trim(); if(c) saveCenterToList(c); return c; })(),
+    center: groupObj ? groupObj.name : '',
+    centerId,
+    groupId,
   };
 
   saveState();
   renderStudents();
+  renderCenters();
+  renderGroups();
   closeModal('edit-student-modal');
   showToast('تم تعديل بيانات ' + name, 'success');
 }
@@ -5712,8 +6092,8 @@ buildAcademicYearOptions();
 
 // Start Firebase after page loads
 window.addEventListener('load', () => {
-  // Init center datalist
-  setTimeout(updateCenterDatalist, 200);
+  // Init center/group dropdowns
+  setTimeout(populateCenterDropdowns, 200);
   // Start Firebase + Auth
   initFirebase();
 });
