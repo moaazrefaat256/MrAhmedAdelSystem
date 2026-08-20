@@ -1855,6 +1855,7 @@ function initFirebase() {
       if (data) {
         state = { ...state, ...data };
         firebaseReady = true;
+        if (currentGrade && seedDefaultCentersGroups(currentGrade)) saveState();
         refreshCurrentPage();
         updateBadge();
       } else {
@@ -1867,6 +1868,7 @@ function initFirebase() {
           }
         } catch(e) {}
         firebaseReady = true;
+        if (currentGrade && seedDefaultCentersGroups(currentGrade)) saveState();
         refreshCurrentPage();
         updateBadge();
       }
@@ -1878,6 +1880,7 @@ function initFirebase() {
         dataRef.on('value', snap => {
           const d = snap.val();
           if (d) { const { settings, ...rest } = d; state = { ...state, ...rest }; }
+          if (seedDefaultCentersGroups(currentGrade)) saveState();
           updateBadge(); refreshCurrentPage(); showSyncStatus('live');
         });
       }
@@ -2082,6 +2085,7 @@ function selectGrade(grade) {
         const { settings, ...rest } = data;
         state = { ...state, ...rest };
       }
+      if (seedDefaultCentersGroups(grade)) saveState();
       updateBadge();
       refreshCurrentPage();
       showSyncStatus('live');
@@ -2094,6 +2098,7 @@ function selectGrade(grade) {
       const backup = localStorage.getItem('chm-center-backup-' + grade);
       if (backup) state = { ...state, ...JSON.parse(backup) };
     } catch(e) {}
+    seedDefaultCentersGroups(grade);
     refreshCurrentPage();
   }
 }
@@ -2216,6 +2221,77 @@ function showPage(name) {
 function ensureCentersGroups() {
   if (!Array.isArray(state.centers)) state.centers = [];
   if (!Array.isArray(state.groups)) state.groups = [];
+}
+
+// One-time default seed data provided by the center owner (Moaaz), mapped by grade key.
+// Each entry: { center: 'اسم السنتر', groups: ['اسم مجموعة 1', 'اسم مجموعة 2', ...] }
+// seedDefaultCentersGroups() only ADDS a center/group if a center with the exact same
+// name doesn't already exist for that grade — it never overwrites or duplicates
+// anything the user already created or edited themselves.
+const DEFAULT_CENTERS_SEED = {
+  edadi1: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+  ],
+  edadi2: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+  ],
+  edadi3: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1', 'مجموعة 2', 'Prep 3 Math مجموعة 1'] },
+    { center: 'السندس',  groups: ['مجموعة 1'] },
+    { center: 'الإيمان', groups: ['مجموعة 1'] },
+    { center: 'الدحيح',  groups: ['مجموعة 1'] },
+  ],
+  prep1: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+  ],
+  prep2: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+  ],
+  sec1: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+  ],
+  thanawy1: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1', 'مجموعة 2', 'مجموعة 3'] },
+    { center: 'الإيمان', groups: ['مجموعة 1'] },
+    { center: 'الدحيح',  groups: ['مجموعة 1'] },
+  ],
+  sec2_bac: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+  ],
+  sec2_azhar: [
+    { center: 'السندس', groups: ['مجموعة 1'] },
+  ],
+  thanawy2: [
+    { center: 'السندس', groups: ['مجموعة 1'] },
+  ],
+  thanawy3: [
+    { center: 'بيرفيكت', groups: ['مجموعة 1 أدبي', 'مجموعة 2 أدبي'] },
+    { center: 'السندس',  groups: ['مجموعة 1'] },
+  ],
+};
+
+function seedDefaultCentersGroups(grade) {
+  ensureCentersGroups();
+  const seed = DEFAULT_CENTERS_SEED[grade];
+  if (!seed || !seed.length) return false;
+
+  let changed = false;
+  seed.forEach(entry => {
+    let centerObj = state.centers.find(c => c.name === entry.center);
+    if (!centerObj) {
+      centerObj = { id: 'center-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7), name: entry.center };
+      state.centers.push(centerObj);
+      changed = true;
+    }
+    entry.groups.forEach(groupName => {
+      const exists = state.groups.some(g => g.centerId === centerObj.id && g.name === groupName);
+      if (!exists) {
+        state.groups.push({ id: 'group-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7), name: groupName, centerId: centerObj.id });
+        changed = true;
+      }
+    });
+  });
+  return changed;
 }
 
 function getCenterById(id) {
