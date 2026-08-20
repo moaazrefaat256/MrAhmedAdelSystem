@@ -2230,43 +2230,43 @@ function ensureCentersGroups() {
 // anything the user already created or edited themselves.
 const DEFAULT_CENTERS_SEED = {
   edadi1: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1'] },
   ],
   edadi2: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1'] },
   ],
   edadi3: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1', 'مجموعة 2', 'Prep 3 Math مجموعة 1'] },
-    { center: 'السندس',  groups: ['مجموعة 1'] },
-    { center: 'الإيمان', groups: ['مجموعة 1'] },
-    { center: 'الدحيح',  groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1', 'مجموعة 2', 'Prep 3 Math مجموعة 1'] },
+    { center: 'سنتر السندس',  groups: ['مجموعة 1'] },
+    { center: 'سنتر الإيمان', groups: ['مجموعة 1'] },
+    { center: 'سنتر الدحيح',  groups: ['مجموعة 1'] },
   ],
   prep1: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1'] },
   ],
   prep2: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1'] },
   ],
   sec1: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1'] },
   ],
   thanawy1: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1', 'مجموعة 2', 'مجموعة 3'] },
-    { center: 'الإيمان', groups: ['مجموعة 1'] },
-    { center: 'الدحيح',  groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1', 'مجموعة 2', 'مجموعة 3'] },
+    { center: 'سنتر الإيمان', groups: ['مجموعة 1'] },
+    { center: 'سنتر الدحيح',  groups: ['مجموعة 1'] },
   ],
   sec2_bac: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1'] },
   ],
   sec2_azhar: [
-    { center: 'السندس', groups: ['مجموعة 1'] },
+    { center: 'سنتر السندس', groups: ['مجموعة 1'] },
   ],
   thanawy2: [
-    { center: 'السندس', groups: ['مجموعة 1'] },
+    { center: 'سنتر السندس', groups: ['مجموعة 1'] },
   ],
   thanawy3: [
-    { center: 'بيرفيكت', groups: ['مجموعة 1 أدبي', 'مجموعة 2 أدبي'] },
-    { center: 'السندس',  groups: ['مجموعة 1'] },
+    { center: 'سنتر بيرفيكت', groups: ['مجموعة 1 أدبي', 'مجموعة 2 أدبي'] },
+    { center: 'سنتر السندس',  groups: ['مجموعة 1'] },
   ],
 };
 
@@ -2277,7 +2277,18 @@ function seedDefaultCentersGroups(grade) {
 
   let changed = false;
   seed.forEach(entry => {
+    // Migration: if a center was previously seeded WITHOUT the "سنتر" prefix
+    // (e.g. "بيرفيكت"), rename it in place instead of creating a duplicate.
+    const legacyName = entry.center.replace(/^سنتر\s+/, '');
     let centerObj = state.centers.find(c => c.name === entry.center);
+    if (!centerObj && legacyName !== entry.center) {
+      const legacyObj = state.centers.find(c => c.name === legacyName);
+      if (legacyObj) {
+        legacyObj.name = entry.center;
+        centerObj = legacyObj;
+        changed = true;
+      }
+    }
     if (!centerObj) {
       centerObj = { id: 'center-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7), name: entry.center };
       state.centers.push(centerObj);
@@ -2307,6 +2318,15 @@ function getGroupById(id) {
 function getGroupsForCenter(centerId) {
   ensureCentersGroups();
   return state.groups.filter(g => g.centerId === centerId);
+}
+
+// Builds the "اسم السنتر - اسم المجموعة" display string for a student row.
+// Falls back to just the group/legacy name if the center link is missing (e.g. old Excel imports).
+function getCenterGroupLabel(s) {
+  if (!s) return '';
+  const centerObj = s.centerId ? getCenterById(s.centerId) : null;
+  if (centerObj && s.center) return `${centerObj.name} - ${s.center}`;
+  return s.center || '';
 }
 
 function openAddCenterModal() {
@@ -2735,7 +2755,7 @@ function renderStudentsTable(filter = '', centerFilter = '') {
       <td>${i + 1}</td>
       <td><strong>${s.name}</strong></td>
       <td><span style="font-family:monospace;font-size:12px;background:var(--surface2);padding:2px 8px;border-radius:6px">${s.code}</span></td>
-      <td>${s.center ? (s.groupId ? `<span class="badge badge-blue">${s.center}</span>` : `<span class="badge badge-warn" title="مستورد من Excel — يحتاج ربط بسنتر/مجموعة">${s.center} ⚠️</span>`) : '—'}</td>
+      <td>${s.center ? (s.groupId ? `<span class="badge badge-blue">${getCenterGroupLabel(s)}</span>` : `<span class="badge badge-warn" title="مستورد من Excel — يحتاج ربط بسنتر/مجموعة">${s.center} ⚠️</span>`) : '—'}</td>
       <td>${s.phone || '—'}</td>
       <td>${s.father || '—'}</td>
       <td>${s.mother || '—'}</td>
