@@ -666,7 +666,7 @@
     #scan-status { width: 100% !important; max-width: 100% !important; font-size: 12px; }
 
     /* Attendance filter row */
-    #att-center-filter { width: 130px !important; font-size: 12px !important; }
+    #att-center-filter { width: 200px !important; font-size: 12px !important; }
 
     /* Upload zone */
     .upload-zone { padding: 20px; }
@@ -1082,8 +1082,8 @@
             <button class="btn btn-success btn-sm" onclick="sendWhatsAppAll()">📲 إرسال للكل</button>
             <button class="btn btn-sm" onclick="promptServerUrl()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:11px">🌐 رابط السيرفر</button>
             <button class="btn btn-danger btn-sm" onclick="deleteAllStudents()">🗑️ حذف الكل</button>
-            <select id="center-filter" onchange="filterStudents()" style="width:160px;font-size:12px;padding:8px 12px">
-              <option value="">كل السنترات</option>
+            <select id="center-filter" onchange="filterStudents()" style="width:220px;font-size:12px;padding:8px 12px">
+              <option value="">كل المجموعات</option>
             </select>
             <div class="search-wrap">
               <span class="search-icon">🔍</span>
@@ -1178,8 +1178,8 @@
         <div class="card-header">
           <div class="card-title">📅 إدارة المحاضرات</div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <select id="att-center-filter" onchange="onAttCenterChange()" style="font-size:13px;padding:8px 12px;width:150px">
-              <option value="">كل السنترات</option>
+            <select id="att-center-filter" onchange="onAttCenterChange()" style="font-size:13px;padding:8px 12px;width:220px">
+              <option value="">كل المجموعات</option>
             </select>
             <button class="btn btn-secondary btn-sm" onclick="renderAttendance()">🔄</button>
           </div>
@@ -2633,28 +2633,33 @@ function confirmDeleteStudent(code) {
 
 function filterStudents() {
   const q = document.getElementById('student-search').value.toLowerCase();
-  const c = document.getElementById('center-filter')?.value || '';
-  renderStudentsTable(q, c);
+  const g = document.getElementById('center-filter')?.value || '';
+  renderStudentsTable(q, g);
 }
 
 function renderStudents() {
-  // Populate center filter
-  const centers = [...new Set(state.students.map(s => s.center).filter(Boolean))];
+  // Populate group filter — shown as "اسم السنتر - اسم المجموعة", selectable across all groups
+  ensureCentersGroups();
   const cf = document.getElementById('center-filter');
   if (cf) {
     const cur = cf.value;
-    cf.innerHTML = '<option value="">كل السنترات</option>' + centers.map(c => `<option value="${c}" ${c===cur?'selected':''}>${c}</option>`).join('');
+    cf.innerHTML = '<option value="">كل المجموعات</option>' +
+      state.groups.map(g => {
+        const c = getCenterById(g.centerId);
+        return `<option value="${g.id}" ${g.id===cur?'selected':''}>${c ? c.name : '—'} - ${g.name}</option>`;
+      }).join('');
+    if (state.groups.some(g => g.id === cur)) cf.value = cur;
   }
-  renderStudentsTable('', '');
+  renderStudentsTable('', cf ? cf.value : '');
   const scl = document.getElementById('students-count-label'); if(scl) scl.textContent = `${state.students.length} طالب مسجل`;
 }
 
-function renderStudentsTable(filter = '', centerFilter = '') {
+function renderStudentsTable(filter = '', groupFilter = '') {
   const tbody = document.getElementById('students-tbody');
   const filtered = state.students.filter(s => {
     const matchText = !filter || s.name.includes(filter) || s.code.includes(filter);
-    const matchCenter = !centerFilter || s.center === centerFilter;
-    return matchText && matchCenter;
+    const matchGroup = !groupFilter || s.groupId === groupFilter;
+    return matchText && matchGroup;
   });
 
   if (!filtered.length) {
@@ -2968,7 +2973,8 @@ function addSession() {
   const num = groupSessions.length + 1;
   const today = new Date().toLocaleDateString('ar-EG');
   const id = 'session-' + Date.now();
-  const sessionName = `${groupName} — محاضرة ${num}`;
+  // Display name: "اسم السنتر - اسم المجموعة - محاضرة N"
+  const sessionName = `${centerObj ? centerObj.name : ''} - ${groupName} - محاضرة ${num}`;
   state.sessions.push({ id, name: sessionName, date: today, center: groupName, centerId, groupId });
   state.attendance[id] = {};
   // default absent only for students of this group
@@ -2994,13 +3000,17 @@ function selectSession(id) {
 }
 
 function renderAttendance() {
-  // Populate center filter dropdown (view filter — free text, unrelated to the create-session requirement)
+  // Populate group filter dropdown — "اسم السنتر - اسم المجموعة", selectable across all groups
+  ensureCentersGroups();
   const centerFilter = document.getElementById('att-center-filter');
   if (centerFilter) {
-    const centers = [...new Set(state.students.map(s => s.center).filter(Boolean))];
     const cur = centerFilter.value;
-    centerFilter.innerHTML = '<option value="">كل السنترات</option>' +
-      centers.map(c => `<option value="${c}" ${c===cur?'selected':''}>${c}</option>`).join('');
+    centerFilter.innerHTML = '<option value="">كل المجموعات</option>' +
+      state.groups.map(g => {
+        const c = getCenterById(g.centerId);
+        return `<option value="${g.id}" ${g.id===cur?'selected':''}>${c ? c.name : '—'} - ${g.name}</option>`;
+      }).join('');
+    if (state.groups.some(g => g.id === cur)) centerFilter.value = cur;
   }
 
   // Populate the "new session" Center/Group required selects
@@ -3008,16 +3018,16 @@ function renderAttendance() {
   const newGroupSel = document.getElementById('att-new-group-select');
   if (newGroupSel) populateGroupSelect('att-new-group-select', document.getElementById('att-new-center-select')?.value || '');
 
-  // Filter sessions by selected center
-  const selectedCenter = getAttCenterFilter();
-  const filteredSessions = selectedCenter
-    ? state.sessions.filter(s => (s.center || '') === selectedCenter)
+  // Filter sessions by selected group
+  const selectedGroupId = getAttCenterFilter();
+  const filteredSessions = selectedGroupId
+    ? state.sessions.filter(s => s.groupId === selectedGroupId)
     : state.sessions;
 
   // Session pills
   const pillsEl = document.getElementById('session-pills');
   if (!filteredSessions.length) {
-    pillsEl.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:8px">${selectedCenter ? 'لا يوجد محاضرات لهذا السنتر' : 'لا يوجد محاضرات — أضف محاضرة جديدة'}</div>`;
+    pillsEl.innerHTML = `<div style="color:var(--text3);font-size:13px;padding:8px">${selectedGroupId ? 'لا يوجد محاضرات لهذه المجموعة' : 'لا يوجد محاضرات — أضف محاضرة جديدة'}</div>`;
   } else {
     pillsEl.innerHTML = filteredSessions.map(s =>
       `<div class="session-pill ${state.currentSession === s.id ? 'active' : ''}" data-session="${s.id}" style="display:flex;align-items:center;gap:8px">
