@@ -3255,6 +3255,16 @@ function filterAttGrid() {
   renderAttGrid(); // re-render with search filter applied
 }
 
+// طلاب المحاضرة = طلاب المجموعة نفسها فقط (مش السنتر كله)
+function getSessionStudents(session) {
+  if (!session) return state.students.filter(s => !s.isGuest);
+  return state.students.filter(s => {
+    if (s.isGuest) return false;
+    if (session.groupId && s.groupId) return s.groupId === session.groupId;   // المجموعة
+    return !session.center || s.center === session.center;                     // بيانات قديمة بدون مجموعة
+  });
+}
+
 function renderAttGrid() {
   const gridPresent = document.getElementById('att-grid-present');
   const gridAbsent  = document.getElementById('att-grid-absent');
@@ -3279,9 +3289,7 @@ function renderAttGrid() {
   const sessionCenter = session?.center || '';
 
   // Students belonging to this session's center
-  const centerStudents = sessionCenter
-    ? state.students.filter(s => s.center === sessionCenter && !s.isGuest)
-    : state.students.filter(s => !s.isGuest);
+  const centerStudents = getSessionStudents(session);
 
   // Guest/compensation students: stored per-session
   const guestsMap = state.attendance['guests_' + state.currentSession] || {};
@@ -3570,9 +3578,7 @@ function updateAttStats() {
   const sessionCenter = session?.center || '';
 
   // Center's own students
-  const centerStudents = sessionCenter
-    ? state.students.filter(s => s.center === sessionCenter && !s.isGuest)
-    : state.students.filter(s => !s.isGuest);
+  const centerStudents = getSessionStudents(session);
 
   // Separate: compensation visitors vs home students who compensated OUT
   const guestsMap = (state.attendance['guests_' + (state.currentSession||'')] || {});
@@ -3782,13 +3788,13 @@ function confirmCompDialog(code, name, fromCenter) {
 
 function markAllPresent() {
   if (!state.currentSession) { showToast('اختر محاضرة أولاً', 'error'); return; }
-  state.students.forEach(s => markStudent(s.code, 'present'));
+  getSessionStudents(state.sessions.find(x => x.id === state.currentSession)).forEach(s => markStudent(s.code, 'present'));
   renderAttGrid();
 }
 
 function markAllAbsent() {
   if (!state.currentSession) { showToast('اختر محاضرة أولاً', 'error'); return; }
-  state.students.forEach(s => markStudent(s.code, 'absent'));
+  getSessionStudents(state.sessions.find(x => x.id === state.currentSession)).forEach(s => markStudent(s.code, 'absent'));
   renderAttGrid();
 }
 
@@ -3797,7 +3803,12 @@ function saveAttendance() {
   const data = state.attendance[state.currentSession] || {};
   const session = state.sessions.find(s => s.id === state.currentSession);
 
-  const absentStudents = state.students.filter(s => data[s.code] === 'absent');
+  const sessNotes = state.attendance[state.currentSession + '_notes'] || {};
+  // الغياب لطلاب مجموعة المحاضرة فقط (ومن غير اللي عوّض)
+  const absentStudents = getSessionStudents(session).filter(s => {
+    const note = sessNotes[s.code] || '';
+    return data[s.code] === 'absent' && !note.includes('تعويض') && !note.startsWith('عوض في');
+  });
 
   if (!absentStudents.length) {
     saveState();
