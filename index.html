@@ -1682,6 +1682,31 @@
   </div>
 </div>
 
+<!-- EDIT GROUP MODAL -->
+<div class="modal-overlay" id="group-modal">
+  <div class="modal" style="width:420px">
+    <div class="modal-header">
+      <div class="modal-title">✏️ تعديل المجموعة</div>
+      <button class="close-btn" onclick="closeModal('group-modal')">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <input type="hidden" id="group-modal-id">
+      <div class="form-group">
+        <label>السنتر *</label>
+        <select id="group-modal-center"></select>
+      </div>
+      <div class="form-group">
+        <label>اسم المجموعة *</label>
+        <input type="text" id="group-modal-name" placeholder="مثال: مجموعة الجمعة 5 عصراً" onkeydown="if(event.key==='Enter') confirmGroupModal()">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" style="flex:1" onclick="confirmGroupModal()">💾 حفظ</button>
+        <button class="btn btn-secondary" onclick="closeModal('group-modal')">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- EDIT STUDENT MODAL -->
 <div class="modal-overlay" id="edit-student-modal">
   <div class="modal" style="width:520px">
@@ -2439,6 +2464,66 @@ function addGroup() {
   showToast('تم إضافة المجموعة بنجاح', 'success');
 }
 
+function openEditGroupModal(id) {
+  const g = getGroupById(id);
+  if (!g) return;
+  document.getElementById('group-modal-id').value = g.id;
+  document.getElementById('group-modal-name').value = g.name;
+  const sel = document.getElementById('group-modal-center');
+  sel.innerHTML = state.centers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  sel.value = g.centerId;
+  openModal('group-modal');
+  setTimeout(() => document.getElementById('group-modal-name').focus(), 100);
+}
+
+function confirmGroupModal() {
+  ensureCentersGroups();
+  const id = document.getElementById('group-modal-id').value;
+  const newCenterId = document.getElementById('group-modal-center').value;
+  const newName = document.getElementById('group-modal-name').value.trim();
+  const g = getGroupById(id);
+  if (!g) return;
+  if (!newCenterId) { showToast('اختر السنتر', 'error'); return; }
+  if (!newName) { showToast('اكتب اسم المجموعة', 'error'); return; }
+  if (state.groups.some(x => x.id !== id && x.centerId === newCenterId && x.name === newName)) {
+    showToast('يوجد مجموعة بنفس الاسم في هذا السنتر بالفعل', 'error'); return;
+  }
+
+  const oldName = g.name;
+  const oldCenter = getCenterById(g.centerId);
+  const newCenter = getCenterById(newCenterId);
+  const oldPrefix = `${oldCenter ? oldCenter.name : ''} - ${oldName} - `;
+  const newPrefix = `${newCenter ? newCenter.name : ''} - ${newName} - `;
+
+  // Update the group itself
+  g.name = newName;
+  g.centerId = newCenterId;
+
+  // Update students linked to this group (they store the group name in .center and the center id in .centerId)
+  state.students.forEach(s => {
+    if (s.groupId === id) { s.center = newName; s.centerId = newCenterId; }
+  });
+
+  // Update sessions (lectures) linked to this group, including auto-generated names
+  state.sessions.forEach(se => {
+    if (se.groupId === id) {
+      se.center = newName;
+      se.centerId = newCenterId;
+      if (typeof se.name === 'string' && se.name.startsWith(oldPrefix)) {
+        se.name = newPrefix + se.name.slice(oldPrefix.length);
+      }
+    }
+  });
+
+  saveState();
+  closeModal('group-modal');
+  renderGroups();
+  renderCenters();
+  if (typeof renderStudents === 'function') { try { renderStudents(); } catch(e) {} }
+  if (typeof renderAttendance === 'function') { try { renderAttendance(); } catch(e) {} }
+  showToast('تم تعديل المجموعة', 'success');
+}
+
 function deleteGroup(id) {
   ensureCentersGroups();
   const g = getGroupById(id);
@@ -2491,6 +2576,7 @@ function renderGroups() {
       <td>${studentsCount}</td>
       <td>
         <div style="display:flex;gap:6px">
+          <button class="btn btn-secondary btn-sm" onclick="openEditGroupModal('${g.id}')">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteGroup('${g.id}')">🗑️</button>
         </div>
       </td>
