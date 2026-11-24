@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mr. Ahmed Adel | نظام الإدارة</title>
 <!-- Firebase via CDN (multiple fallbacks) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/firebase-app-compat.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.7.1/firebase-database-compat.min.js"></script>
 
@@ -762,14 +761,6 @@
   .session-pill.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
   .progress-fill { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
   .grade-indicator { background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent)); }
-  .main .page { max-width: 2000px; margin-inline: auto; }
-  .main, .card { min-width: 0; }
-  .wa-sw { position: relative; display: inline-block; width: 38px; height: 20px; vertical-align: middle; margin-inline-start: 8px; }
-  .wa-sw input { opacity: 0; width: 0; height: 0; }
-  .wa-sw span { position: absolute; inset: 0; background: var(--border); border-radius: 20px; cursor: pointer; transition: .2s; }
-  .wa-sw span:before { content: ''; position: absolute; width: 14px; height: 14px; top: 3px; right: 3px; background: #fff; border-radius: 50%; transition: .2s; }
-  .wa-sw input:checked + span { background: var(--accent3); }
-  .wa-sw input:checked + span:before { transform: translateX(-18px); }
 </style>
 </head>
 <body>
@@ -932,10 +923,6 @@
   <div class="nav-item" onclick="showPage('notifications')">
     <span class="icon">🔔</span>
     <span>الإشعارات</span>
-  </div>
-  <div class="nav-item" onclick="showPage('whatsapp')">
-    <span class="icon">💬</span>
-    <span>WhatsApp</span>
   </div>
   <div class="nav-item" onclick="showPage('settings')">
     <span class="icon">⚙️</span>
@@ -1540,45 +1527,6 @@
       </div>
     </div>
 
-<div class="page" id="page-whatsapp">
-  <div class="card">
-    <div class="card-header">
-      <div>
-        <div class="card-title">💬 إدارة WhatsApp</div>
-        <div class="card-subtitle" id="wa-server-state">جارٍ الاتصال بالسيرفر...</div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="waPair()">📱 Pair via WhatsApp</button>
-        <button class="btn btn-secondary" onclick="waGetTunnel()">🌐 Get Tunnel Link</button>
-        <button class="btn btn-secondary" onclick="promptServerUrl();waLoad()">⚙️ السيرفر</button>
-        <button class="btn btn-secondary" onclick="waSetKey()">🔑 المفتاح</button>
-      </div>
-    </div>
-    <div id="wa-tunnel-box" style="display:none;margin-top:12px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px"></div>
-  </div>
-  <div class="card">
-    <div class="card-header">
-      <div><div class="card-title">الأرقام (Clients)</div><div class="card-subtitle" id="wa-count">0</div></div>
-      <button class="btn btn-secondary" onclick="waPair()">➕ Add Client</button>
-    </div>
-    <div class="table-wrap"><table>
-      <thead><tr><th>#</th><th>الاسم / الرقم</th><th>الحالة</th><th>الإجراءات</th></tr></thead>
-      <tbody id="wa-clients-tbody"></tbody>
-    </table></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="wa-qr-modal">
-  <div class="modal" style="width:360px;text-align:center">
-    <div class="modal-header">
-      <div class="modal-title">📱 امسح الـ QR</div>
-      <button class="close-btn" onclick="waCloseQR()">✕</button>
-    </div>
-    <div id="wa-qr-box" style="display:flex;justify-content:center;padding:14px;background:#fff;border-radius:12px;min-height:240px;align-items:center;color:#333"></div>
-    <div id="wa-qr-msg" style="margin-top:12px;font-size:13px;color:var(--text3)">واتساب ← الأجهزة المرتبطة ← ربط جهاز</div>
-  </div>
-</div>
-
 <div class="page" id="page-settings">
       <div class="two-col">
         <div class="card">
@@ -1924,27 +1872,16 @@ function showSyncStatus(status) {
   el.style.color = color;
 }
 
-let _saveTimer = null, _localWrite = false;
-function saveState() {            // بيجمّع الحفظات المتتالية في كتابة واحدة (أسرع وأخف على السيرفر)
-  clearTimeout(_saveTimer);
-  showSyncStatus('saving');
-  _saveTimer = setTimeout(flushState, 500);
-}
-function flushState() {
-  clearTimeout(_saveTimer); _saveTimer = null;
+function saveState() {
+  // Always save to localStorage as backup
   try { localStorage.setItem('chm-center-backup-' + (currentGrade||'general'), JSON.stringify(state)); } catch(e) {}
+
   if (!dataRef) return;
-  _localWrite = true;             // الكتابة المحلية ما تعملش إعادة رسم للصفحة
-  let p;
-  try { p = dataRef.set(state); } finally { _localWrite = false; }
-  p.then(() => showSyncStatus('saved')).catch(() => showSyncStatus('offline'));
+  showSyncStatus('saving');
+  dataRef.set(state)
+    .then(() => showSyncStatus('saved'))
+    .catch(() => showSyncStatus('offline'));
 }
-window.addEventListener('beforeunload', () => { if (_saveTimer) flushState(); });
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden && _saveTimer) flushState();
-  else if (!document.hidden && db) { try { db.goOnline(); } catch(e) {} }
-});
-window.addEventListener('online', () => { try { db && db.goOnline(); } catch(e) {} });
 
 function initFirebase() {
   if (typeof firebase === 'undefined') {
@@ -1968,14 +1905,10 @@ function initFirebase() {
     // Connection monitor
     db.ref('.info/connected').on('value', snap => {
       showSyncStatus(snap.val() ? 'live' : 'offline');
-      // لو الاتصال وقع أكتر من 8 ثواني نعمل إعادة اتصال تلقائي بدل ما التطبيق يعلّق
-      clearTimeout(window._fbOff);
-      if (!snap.val()) window._fbOff = setTimeout(() => { try { db.goOffline(); setTimeout(() => db.goOnline(), 400); } catch(e) {} }, 8000);
     });
 
     // Real-time listener
     dataRef.on('value', snapshot => {
-      if (_localWrite) return;
       const data = snapshot.val();
       if (data) {
         state = { ...state, ...data };
@@ -2001,7 +1934,6 @@ function initFirebase() {
         dataRef.off();
         dataRef = db.ref('center-data/' + currentGrade);
         dataRef.on('value', snap => {
-          if (_localWrite) return;
           const d = snap.val();
           if (d) { const { settings, ...rest } = d; state = { ...state, ...rest }; }
           updateBadge(); refreshCurrentPage(); showSyncStatus('live');
@@ -2195,18 +2127,13 @@ function selectGrade(grade) {
   }, 50);
 
   // Detach old Firebase listener if any
-  if (_saveTimer) flushState();   // احفظ أي تعديل معلّق على المرحلة القديمة قبل التبديل
   if (dataRef) dataRef.off();
 
   // Update Firebase ref to grade-specific path and load data
   if (db) {
     dataRef = db.ref('center-data/' + grade);
     showSyncStatus('connecting');
-    // عرض فوري من النسخة المحلية للمرحلة، وبعدها Firebase يحدّث
-    try { const b = localStorage.getItem('chm-center-backup-' + grade);
-      if (b) { const { settings, ...rest } = JSON.parse(b); state = { ...state, ...rest }; updateBadge(); refreshCurrentPage(); } } catch(e) {}
     dataRef.on('value', snapshot => {
-      if (_localWrite) return;
       const data = snapshot.val();
       if (data) {
         // Merge carefully — don't overwrite settings
@@ -2308,7 +2235,6 @@ const pageConfig = {
   quizzes: { title: 'الكويزات', subtitle: 'إدخال وإدارة الدرجات', actions: '' },
   reports: { title: 'التقارير', subtitle: 'إحصائيات وتحليلات', actions: '' },
   notifications: { title: 'الإشعارات', subtitle: 'رسائل أولياء الأمور', actions: '' },
-  whatsapp: { title: 'WhatsApp', subtitle: 'الأرقام والسيرفر والأجهزة', actions: '' },
   settings: { title: 'الإعدادات', subtitle: 'إعدادات السنتر', actions: '' }
 };
 
@@ -2333,7 +2259,6 @@ function showPage(name) {
   if (name === 'students') { renderStudents(); setTimeout(()=>{ const el=document.getElementById('s-code'); if(el&&!el.value) el.value=generateCode(); },50); }
   if (name === 'centers') renderCenters();
   if (name === 'groups') renderGroups();
-  if (name === 'whatsapp') waStart(); else waStop();
   if (name === 'attendance') renderAttendance();
   if (name === 'quizzes') renderQuizzes();
   if (name === 'reports') renderReports();
@@ -4735,14 +4660,6 @@ function exportReportPDF() {
 // every connected device/phone, instead of each device needing it entered
 // manually. localStorage is kept only as an offline fallback/cache.
 let WA_SERVER = localStorage.getItem('wa_server_url') || '';
-// لو الـ App مفتوح من السيرفر نفسه (localhost أو IP داخلي) نستخدمه مباشرة
-const WA_SAME_ORIGIN = /^https?:$/.test(location.protocol) && /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|.*\.trycloudflare\.com$)/.test(location.hostname);
-if (WA_SAME_ORIGIN) WA_SERVER = location.origin;
-function waFetch(path, opts = {}) {
-  const key = localStorage.getItem('wa_api_key') || '';
-  opts.headers = Object.assign({}, opts.headers, key ? { 'x-api-key': key } : {});
-  return fetch(WA_SERVER + path, opts);
-}
 let waConfigRef = null;
 
 // Starts listening to the global (grade-independent) server-url config node.
@@ -4753,7 +4670,7 @@ function initWaServerSync() {
     waConfigRef = firebase.database().ref('app-config/waServerUrl');
     waConfigRef.on('value', snap => {
       const url = snap.val();
-      if (url && url !== WA_SERVER && !WA_SAME_ORIGIN) {
+      if (url && url !== WA_SERVER) {
         WA_SERVER = url;
         try { localStorage.setItem('wa_server_url', WA_SERVER); } catch(e) {}
       } else if (!url && !WA_SERVER) {
@@ -4761,124 +4678,6 @@ function initWaServerSync() {
       }
     });
   } catch(e) { console.error('WA server sync error:', e); }
-}
-
-
-// ============================================================
-//  WHATSAPP MANAGEMENT (clients / QR / tunnel / linked devices)
-// ============================================================
-let waTimer = null, waQRId = null, waQRText = '', waData = null;
-const waEsc = t => String(t ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-async function waApi(path, method = 'GET', body) {
-  if (!WA_SERVER) { promptServerUrl(); throw new Error('حدد رابط السيرفر'); }
-  const r = await waFetch(path, { method, headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined });
-  return r.json();
-}
-function waStart(ms = 3000) { waLoad(); clearInterval(waTimer); waTimer = setInterval(() => { if (!document.hidden) waLoad(); }, ms); }
-function waStop() { clearInterval(waTimer); waTimer = null; }
-function waSetKey() {
-  const k = prompt('🔑 مفتاح حماية السيرفر (WA_KEY) — سيبه فاضي لو مش مستخدم:', localStorage.getItem('wa_api_key') || '');
-  if (k !== null) { localStorage.setItem('wa_api_key', k.trim()); waLoad(); }
-}
-async function waLoad() {
-  const st = document.getElementById('wa-server-state');
-  try {
-    const d = await waApi('/status');
-    if (d.error) throw new Error(d.error);
-    waData = d; waRender(d);
-    if (st) st.innerHTML = `<span style="color:var(--accent3)">● السيرفر شغال</span> — ${d.ready} رقم جاهز`;
-  } catch (e) {
-    if (st) st.innerHTML = `<span style="color:var(--danger)">● السيرفر غير متصل</span> — ${waEsc(e.message || '')}`;
-  }
-}
-function waBadge(s) {
-  const m = { ready: ['badge-success', 'Connected'], qr: ['badge-warn', 'في انتظار الـ QR'], starting: ['badge-blue', 'جارٍ التشغيل'],
-              authenticating: ['badge-blue', 'جارٍ الربط'], disconnected: ['badge-danger', 'Disconnected'] }[s] || ['badge-blue', s];
-  return `<span class="badge ${m[0]}">${m[1]}</span>`;
-}
-function waRender(d) {
-  document.getElementById('wa-count').textContent = `${d.clients.length} رقم`;
-  document.getElementById('wa-clients-tbody').innerHTML = d.clients.length ? d.clients.map((c, i) => `<tr>
-    <td>${i + 1}</td>
-    <td><strong>${waEsc(c.name || 'Client ' + c.id)}</strong><div style="font-size:12px;color:var(--text3)">${waEsc(c.phone || '—')}</div></td>
-    <td>${waBadge(c.status)}<label class="wa-sw" title="تفعيل/إيقاف الإرسال من هذا الرقم"><input type="checkbox" ${c.enabled ? 'checked' : ''} onchange="waToggle(${c.id}, this.checked)"><span></span></label></td>
-    <td><div style="display:flex;gap:6px">
-      ${c.status === 'qr' ? `<button class="btn btn-primary btn-sm" onclick="waShowQR(${c.id})">QR</button>` : ''}
-      <button class="btn btn-secondary btn-sm" onclick="waReconnect(${c.id})">🔌 Reconnect</button>
-      <button class="btn btn-secondary btn-sm" onclick="waRepair(${c.id})">🔄 Re-pair</button>
-      <button class="btn btn-danger btn-sm" onclick="waDelete(${c.id})">🗑️</button></div></td></tr>`).join('')
-    : '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:30px">لا يوجد أرقام — اضغط Pair via WhatsApp</td></tr>';
-
-
-  // QR modal
-  if (waQRId != null) {
-    const c = d.clients.find(x => x.id === waQRId);
-    const box = document.getElementById('wa-qr-box');
-    if (!c) waCloseQR();
-    else if (c.status === 'ready') { waCloseQR(); showToast('✅ تم ربط الرقم بنجاح', 'success'); }
-    else if (c.qr && c.qr !== waQRText) {
-      waQRText = c.qr; box.innerHTML = ''; box.dataset.msg = '';
-      new QRCode(box, { text: c.qr, width: 240, height: 240 });
-    } else if (!c.qr) {
-      waQRText = '';
-      const msg = c.status === 'disconnected'
-        ? `<div style="text-align:center">❌ تعذر تشغيل واتساب<br><small style="color:#a00">${waEsc(c.error || '')}</small><br><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="waReconnect(${c.id})">🔌 إعادة المحاولة</button></div>`
-        : `⏳ جارٍ تحميل واتساب... ${waEsc(c.progress || '')}<br><small>أول مرة ممكن تاخد دقيقة</small>`;
-      if (box.dataset.msg !== msg) { box.dataset.msg = msg; box.innerHTML = msg; }
-    }
-  }
-}
-function waShowQR(id) {
-  waQRId = id; waQRText = '';
-  document.getElementById('wa-qr-box').textContent = 'جارٍ تجهيز الـ QR...';
-  openModal('wa-qr-modal'); waStart(1000);   // تحديث كل ثانية أثناء الـ QR
-}
-function waCloseQR() { waQRId = null; closeModal('wa-qr-modal'); if (waTimer) waStart(3000); }
-async function waPair() {
-  try { const r = await waApi('/add-client', 'POST', {}); if (r.success) waShowQR(r.id); else showToast(r.error || 'تعذر الإضافة', 'error'); }
-  catch (e) { showToast('⚠️ ' + e.message, 'error'); }
-}
-async function waReconnect(id) {
-  const r = await waApi(`/clients/${id}/reconnect`, 'POST', {});
-  showToast(r.success ? '🔌 جارٍ إعادة الاتصال...' : (r.error || 'فشل'), r.success ? 'info' : 'error'); waLoad();
-}
-async function waToggle(id, on) {
-  const r = await waApi(`/clients/${id}/toggle`, 'POST', { enabled: on });
-  showToast(on ? '✅ الرقم مفعّل للإرسال' : '⏸️ الرقم متوقف عن الإرسال', 'info'); waLoad();
-}
-async function waRepair(id) {
-  if (!confirm('إعادة الربط ستفصل الرقم الحالي وتطلب QR جديد. متأكد؟')) return;
-  const r = await waApi(`/clients/${id}/repair`, 'POST', {});
-  if (r.success) waShowQR(id); else showToast(r.error, 'error');
-}
-async function waDelete(id) {
-  if (!confirm('حذف الرقم وفصله من واتساب؟')) return;
-  const r = await waApi(`/remove-client/${id}`, 'DELETE');
-  showToast(r.success ? 'تم حذف الرقم' : (r.error || 'فشل'), r.success ? 'info' : 'error'); waLoad();
-}
-async function waGetTunnel() {
-  const box = document.getElementById('wa-tunnel-box');
-  box.style.display = 'block'; box.textContent = '⏳ جارٍ تشغيل الـ Tunnel...';
-  try {
-    await waApi('/tunnel/start', 'POST', {});
-    for (let i = 0; i < 40; i++) {
-      const t = await waApi('/tunnel');
-      if (t.status === 'running' && t.url) {
-        box.innerHTML = `<div style="direction:ltr;font-weight:700;word-break:break-all">${waEsc(t.url)}</div>
-          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText('${t.url}');showToast('تم النسخ','success')">📋 نسخ</button>
-          <button class="btn btn-secondary btn-sm" onclick="waPublishLink('${t.url}')">🔄 اعتماده لكل الأجهزة</button></div>`;
-        return;
-      }
-      if (t.status === 'error') { box.textContent = '❌ ' + t.error; return; }
-      await new Promise(r => setTimeout(r, 1000));
-    }
-    box.textContent = '⚠️ انتهت المهلة — حاول تاني';
-  } catch (e) { box.textContent = '❌ ' + e.message; }
-}
-function waPublishLink(url) {
-  if (waConfigRef) waConfigRef.set(url).then(() => showToast('✅ تم اعتماد الرابط على كل الأجهزة', 'success'));
-  else showToast('⚠️ Firebase غير متصل', 'error');
 }
 
 function promptServerUrl() {
@@ -4914,7 +4713,7 @@ async function sendWhatsAppServer(phone, message) {
   let p = phone.replace(/[\s\-\(\)]/g, '');
   if (p.startsWith('0')) p = '2' + p;
   if (!WA_SERVER) throw new Error('لم يتم تحديد رابط السيرفر');
-  const res = await waFetch('/send', {
+  const res = await fetch(WA_SERVER + '/send', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ phone: p, message })
@@ -6025,7 +5824,7 @@ async function sendAllWA() {
   // تحقق من عدد الأرقام المتاحة لتحديد الـ delay
   let readyClients = 1;
   try {
-    const statusRes = await waFetch('/status');
+    const statusRes = await fetch(WA_SERVER + '/status');
     const statusData = await statusRes.json();
     readyClients = statusData.ready || 1;
   } catch(e) {}
@@ -6450,7 +6249,7 @@ async function sendQROne(s) {
   let p = phone.replace(/[\s\-\(\)]/g, '');
   if (p.startsWith('0')) p = '2' + p;
   const msg = `📷 بطاقة QR الطالب — Mr. Ahmed Adel\n\n👤 الطالب: *${s.name}*\n🔢 الكود: ${s.code}`;
-  const res = await waFetch('/send-image', {
+  const res = await fetch(WA_SERVER + '/send-image', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ phone: p, message: msg, image: base64 })
